@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './Login.css'
 
-function Login({ onLogin, onClose }) {
+function Login({ onLogin, onBack }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -24,12 +24,12 @@ function Login({ onLogin, onClose }) {
   }
 
   return (
-    <div className="login-container" onClick={onClose}>
-      <div className="login-card" onClick={(e) => e.stopPropagation()}>
-        {/* Close Button */}
-        {onClose && (
-          <button className="login-close-btn" onClick={onClose} aria-label="Close">
-            ✕
+    <div className="login-container">
+      <div className="login-card">
+        {/* Back Button */}
+        {onBack && (
+          <button className="login-back-btn" onClick={onBack} aria-label="Kembali">
+            ← Kembali
           </button>
         )}
         <div className="login-header">

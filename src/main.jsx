@@ -6,34 +6,35 @@ import Login from './Login.jsx'
 
 function MainApp() {
   const [userEmail, setUserEmail] = useState('')
-  const [showLogin, setShowLogin] = useState(false)
+  const [currentPage, setCurrentPage] = useState('home') // 'home' or 'login'
 
   const handleLogin = (email) => {
     setUserEmail(email)
-    setShowLogin(false)
+    setCurrentPage('home') // Kembali ke home setelah login
   }
 
   const handleLogout = () => {
     setUserEmail('')
   }
 
-  const openLogin = () => {
-    setShowLogin(true)
+  const goToLogin = () => {
+    setCurrentPage('login')
   }
 
-  const closeLogin = () => {
-    setShowLogin(false)
+  const goToHome = () => {
+    setCurrentPage('home')
   }
 
   return (
     <>
-      <App 
-        userEmail={userEmail} 
-        onLogout={handleLogout}
-        onOpenLogin={openLogin}
-      />
-      {showLogin && (
-        <Login onLogin={handleLogin} onClose={closeLogin} />
+      {currentPage === 'login' ? (
+        <Login onLogin={handleLogin} onBack={goToHome} />
+      ) : (
+        <App 
+          userEmail={userEmail} 
+          onLogout={handleLogout}
+          onOpenLogin={goToLogin}
+        />
       )}
     </>
   )
