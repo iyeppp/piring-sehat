@@ -1,0 +1,79 @@
+/* Navbar Styles */
+.navbar {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Brand Logo */
+.navbar-brand {
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
+  padding: 1rem 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.brand-logo:hover {
+  transform: scale(1.05);
+}
+
+/* Menu Overlay */
+.menu-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .navbar-container {
+    flex-wrap: nowrap;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .navbar-brand {
+    flex: 1;
+  }
+
+  .brand-logo {
+    font-size: 1.25rem;
+    padding: 0.5rem 0;
+  }
+}

@@ -20,7 +20,7 @@
 /* Back Button */
 .login-back-btn {
   position: absolute;
-  top: 0.7rem;
+  top: 1.5rem;
   left: 1.5rem;
   background: transparent;
   border: none;
@@ -31,15 +31,14 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.5rem;
   transition: all 0.3s ease;
   z-index: 10;
 }
 
 .login-back-btn:hover {
-  background-color: #10b981;
-  color: white;
+  color: #059669;
+  transform: translateX(-3px);
 }
 
 .login-header {
