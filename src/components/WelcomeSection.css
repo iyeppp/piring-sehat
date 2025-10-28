@@ -1,6 +1,10 @@
 /* Welcome Section */
 .welcome {
-  margin-bottom: 3rem;
+  min-height: 100vh;
+  padding: 80px 40px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
 }
 
 .welcome-content {
@@ -8,6 +12,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .welcome-text {
@@ -54,6 +61,10 @@
 }
 
 @media (max-width: 968px) {
+  .welcome {
+    padding: 60px 20px;
+  }
+
   .welcome-content {
     grid-template-columns: 1fr;
     gap: 2rem;

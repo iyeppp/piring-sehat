@@ -3,7 +3,7 @@ import nasiGorengImg from '../assets/pngtree-simple-thai-fried-rice-with-egg-for
 
 function WelcomeSection() {
   return (
-    <section className="welcome">
+    <section id="home" className="welcome">
       <div className="welcome-content">
         <div className="welcome-text">
           <h2>Selamat Datang!</h2>

@@ -1,4 +1,8 @@
 /* Global App Styles */
+html {
+  scroll-behavior: smooth;
+}
+
 .app {
   min-height: 100vh;
   display: flex;
@@ -8,8 +12,5 @@
 /* Main Content Container */
 .content {
   flex: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
   width: 100%;
 }

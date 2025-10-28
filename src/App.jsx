@@ -1,6 +1,10 @@
 import './App.css'
 import Navbar from './components/Navbar'
 import WelcomeSection from './components/WelcomeSection'
+import BMICalculator from './components/BMICalculator'
+import CariMakanan from './components/CariMakanan'
+import HitungKalori from './components/HitungKalori'
+import TentangKami from './components/TentangKami'
 import Footer from './components/Footer'
 
 function App({ userEmail, onLogout, onOpenLogin }) {
@@ -14,6 +18,10 @@ function App({ userEmail, onLogout, onOpenLogin }) {
 
       <main className="content">
         <WelcomeSection />
+        <BMICalculator />
+        <CariMakanan />
+        <HitungKalori />
+        <TentangKami />
       </main>
 
       <Footer />
