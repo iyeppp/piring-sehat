@@ -5,15 +5,18 @@ import App from './App.jsx'
 import Login from './components/Login.jsx'
 
 function MainApp() {
+  const [username, setUsername] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const [currentPage, setCurrentPage] = useState('home') // 'home' or 'login'
 
-  const handleLogin = (email) => {
-    setUserEmail(email)
+  const handleLogin = (usernameInput, emailInput) => {
+    setUsername(usernameInput)
+    setUserEmail(emailInput)
     setCurrentPage('home') // Kembali ke home setelah login
   }
 
   const handleLogout = () => {
+    setUsername('')
     setUserEmail('')
   }
 
@@ -31,7 +34,7 @@ function MainApp() {
         <Login onLogin={handleLogin} onBack={goToHome} />
       ) : (
         <App 
-          userEmail={userEmail} 
+          userEmail={username} 
           onLogout={handleLogout}
           onOpenLogin={goToLogin}
         />

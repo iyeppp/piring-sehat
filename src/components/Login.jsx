@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './Login.css'
 
 function Login({ onLogin, onBack }) {
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -9,8 +10,8 @@ function Login({ onLogin, onBack }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     
-    if (!email || !password) {
-      setError('Email dan password harus diisi!')
+    if (!username || !email || !password) {
+      setError('Username, email dan password harus diisi!')
       return
     }
 
@@ -20,7 +21,15 @@ function Login({ onLogin, onBack }) {
     }
 
     setError('')
-    onLogin(email)
+    onLogin(username, email)
+  }
+
+  const handleRegister = () => {
+    alert('Fitur registrasi akan segera hadir!')
+  }
+
+  const handleForgotPassword = () => {
+    alert('Fitur lupa password akan segera hadir!')
   }
 
   return (
@@ -40,6 +49,18 @@ function Login({ onLogin, onBack }) {
         <form onSubmit={handleSubmit} className="login-form">
           {error && <div className="error-message">{error}</div>}
           
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Masukkan username"
+              className="form-input"
+            />
+          </div>
+
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -67,6 +88,16 @@ function Login({ onLogin, onBack }) {
           <button type="submit" className="login-button">
             Masuk
           </button>
+
+          <div className="form-footer">
+            <button type="button" onClick={handleForgotPassword} className="link-button">
+              Lupa Password?
+            </button>
+            <span className="separator">•</span>
+            <button type="button" onClick={handleRegister} className="link-button">
+              Daftar Akun
+            </button>
+          </div>
         </form>
       </div>
     </div>

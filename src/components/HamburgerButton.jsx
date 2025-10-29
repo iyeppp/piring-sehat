@@ -7,9 +7,15 @@ function HamburgerButton({ isOpen, onClick }) {
       onClick={onClick}
       aria-label="Toggle menu"
     >
-      <span className="hamburger-line"></span>
-      <span className="hamburger-line"></span>
-      <span className="hamburger-line"></span>
+      {isOpen ? (
+        <span className="hamburger-x">&#x2716;</span>
+      ) : (
+        <>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+        </>
+      )}
     </button>
   )
 }

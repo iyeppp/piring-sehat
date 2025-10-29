@@ -1,5 +1,5 @@
 import './WelcomeSection.css'
-import nasiGorengImg from '../assets/pngtree-simple-thai-fried-rice-with-egg-for-busy-weeknights-delicious-a-png-image_16285503.png'
+import logo from '../assets/new-logo.png'
 
 function WelcomeSection() {
   return (
@@ -17,7 +17,7 @@ function WelcomeSection() {
           </p>
         </div>
         <div className="welcome-image">
-          <img src={nasiGorengImg} alt="Nasi Goreng Sehat" />
+          <img src={logo} alt="PiringSehat Logo" className="logo-image" />
         </div>
       </div>
     </section>

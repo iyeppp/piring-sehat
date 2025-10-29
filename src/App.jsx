@@ -18,10 +18,10 @@ function App({ userEmail, onLogout, onOpenLogin }) {
       
       <main className="content">
         <WelcomeSection />
+        <TentangKami />
         <BMICalculator />
         <CariMakanan />
-        <HitungKalori />
-        <TentangKami />
+        <HitungKalori userEmail={userEmail} onOpenLogin={onOpenLogin} />
       </main>
 
       <Footer />

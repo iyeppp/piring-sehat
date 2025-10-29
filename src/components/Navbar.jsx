@@ -18,7 +18,7 @@ function Navbar({ userEmail, onLogout, onOpenLogin }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'bmi', 'cari', 'hitung', 'tentang']
+      const sections = ['home', 'tentang', 'bmi', 'cari', 'hitung']
       const scrollPosition = window.scrollY + 100 // offset for navbar height
 
       for (const section of sections) {

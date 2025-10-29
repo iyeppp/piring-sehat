@@ -59,6 +59,67 @@
   border-color: #10b981;
 }
 
+/* Gender Selection Styling */
+.gender-group {
+  margin-bottom: 25px;
+}
+
+.gender-label {
+  display: block;
+  margin-bottom: 12px;
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.gender-options {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.gender-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: white;
+}
+
+.gender-option:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.gender-option input[type="radio"] {
+  display: none;
+}
+
+.gender-option input[type="radio"]:checked + .gender-text {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.gender-option:has(input[type="radio"]:checked) {
+  border-color: #10b981;
+  background: #f0fdf4;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.gender-text {
+  font-size: 1rem;
+  color: #666;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .form-buttons {
   display: flex;
   gap: 15px;
@@ -197,6 +258,18 @@
 
   .form-buttons {
     flex-direction: column;
+  }
+
+  .gender-options {
+    gap: 10px;
+  }
+
+  .gender-option {
+    padding: 12px 15px;
+  }
+
+  .gender-text {
+    font-size: 0.95rem;
   }
 
   .bmi-value {

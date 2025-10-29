@@ -4,10 +4,10 @@ import UserInfo from './UserInfo'
 function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin, activeSection }) {
   const menuItems = [
     { href: '#home', label: 'Home', id: 'home' },
+    { href: '#tentang', label: 'Tentang Kami', id: 'tentang' },
     { href: '#bmi', label: 'BMI', id: 'bmi' },
     { href: '#cari', label: 'Cari Makanan', id: 'cari' },
     { href: '#hitung', label: 'Hitung Kalori', id: 'hitung' },
-    { href: '#tentang', label: 'Tentang Kami', id: 'tentang' },
   ]
 
   return (

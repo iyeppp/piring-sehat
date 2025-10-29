@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './BMICalculator.css'
 
 function BMICalculator() {
+  const [gender, setGender] = useState('')
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
   const [bmi, setBmi] = useState(null)
@@ -49,6 +50,7 @@ function BMICalculator() {
   }
 
   const resetCalculator = () => {
+    setGender('')
     setWeight('')
     setHeight('')
     setBmi(null)
@@ -65,6 +67,34 @@ function BMICalculator() {
         </p>
 
         <form onSubmit={calculateBMI} className="bmi-form">
+          <div className="form-group gender-group">
+            <label className="gender-label">Jenis Kelamin</label>
+            <div className="gender-options">
+              <label className="gender-option">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="laki-laki"
+                  checked={gender === 'laki-laki'}
+                  onChange={(e) => setGender(e.target.value)}
+                  required
+                />
+                <span className="gender-text">Laki-laki</span>
+              </label>
+              <label className="gender-option">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="perempuan"
+                  checked={gender === 'perempuan'}
+                  onChange={(e) => setGender(e.target.value)}
+                  required
+                />
+                <span className="gender-text">Perempuan</span>
+              </label>
+            </div>
+          </div>
+
           <div className="form-group">
             <label htmlFor="weight">Berat Badan (kg)</label>
             <input
