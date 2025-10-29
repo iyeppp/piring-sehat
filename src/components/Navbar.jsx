@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './Navbar.css'
 import HamburgerButton from './HamburgerButton'
 import NavMenu from './NavMenu'
@@ -6,6 +6,7 @@ import UserInfo from './UserInfo'
 
 function Navbar({ userEmail, onLogout, onOpenLogin }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -14,6 +15,29 @@ function Navbar({ userEmail, onLogout, onOpenLogin }) {
   const closeMenu = () => {
     setIsMenuOpen(false)
   }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'bmi', 'cari', 'hitung', 'tentang']
+      const scrollPosition = window.scrollY + 100 // offset for navbar height
+
+      for (const section of sections) {
+        const element = document.getElementById(section)
+        if (element) {
+          const { offsetTop, offsetHeight } = element
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section)
+            break
+          }
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    handleScroll() // Call once on mount
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <>
@@ -39,6 +63,7 @@ function Navbar({ userEmail, onLogout, onOpenLogin }) {
             userEmail={userEmail}
             onLogout={onLogout}
             onOpenLogin={onOpenLogin}
+            activeSection={activeSection}
           />
 
           {/* User Info Desktop / Login Button */}

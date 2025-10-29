@@ -20,24 +20,26 @@
 /* Back Button */
 .login-back-btn {
   position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
+  top: 0.75rem;
+  left: 0.75rem;
   background: transparent;
   border: none;
   color: #10b981;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
   transition: all 0.3s ease;
   z-index: 10;
 }
 
 .login-back-btn:hover {
-  color: #059669;
+  background-color: #10b981;
+  color: white;
   transform: translateX(-3px);
 }
 
@@ -143,8 +145,8 @@
   }
 
   .login-back-btn {
-    top: 1rem;
-    left: 1rem;
-    font-size: 0.9rem;
+    top: 0.5rem;
+    left: 0.5rem;
+    font-size: 0.8rem;
   }
 }

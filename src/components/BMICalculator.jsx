@@ -6,6 +6,7 @@ function BMICalculator() {
   const [height, setHeight] = useState('')
   const [bmi, setBmi] = useState(null)
   const [category, setCategory] = useState('')
+  const [weightRecommendation, setWeightRecommendation] = useState('')
 
   const calculateBMI = (e) => {
     e.preventDefault()
@@ -15,16 +16,35 @@ function BMICalculator() {
       const bmiValue = (weight / (heightInMeters * heightInMeters)).toFixed(1)
       setBmi(bmiValue)
       
-      // Determine category
+      // Calculate weight recommendation
+      let recommendation = ''
+      const currentWeight = parseFloat(weight)
+      
+      // Determine category and recommendation
       if (bmiValue < 18.5) {
         setCategory('Kurus')
+        // Calculate weight needed to reach BMI 18.5 (lower bound of normal)
+        const targetWeight = 18.5 * (heightInMeters * heightInMeters)
+        const weightNeeded = (targetWeight - currentWeight).toFixed(1)
+        recommendation = `Anda membutuhkan ${weightNeeded} kg lagi untuk mencapai kategori ideal (BMI 18.5).`
       } else if (bmiValue >= 18.5 && bmiValue < 25) {
         setCategory('Normal')
+        recommendation = ''
       } else if (bmiValue >= 25 && bmiValue < 30) {
         setCategory('Gemuk')
+        // Calculate weight needed to lose to reach BMI 24.9 (upper bound of normal)
+        const targetWeight = 24.9 * (heightInMeters * heightInMeters)
+        const weightToLose = (currentWeight - targetWeight).toFixed(1)
+        recommendation = `Anda perlu diet ${weightToLose} kg untuk mencapai kategori ideal (BMI 24.9).`
       } else {
         setCategory('Obesitas')
+        // Calculate weight needed to lose to reach BMI 24.9
+        const targetWeight = 24.9 * (heightInMeters * heightInMeters)
+        const weightToLose = (currentWeight - targetWeight).toFixed(1)
+        recommendation = `Anda perlu diet ${weightToLose} kg untuk mencapai kategori ideal (BMI 24.9).`
       }
+      
+      setWeightRecommendation(recommendation)
     }
   }
 
@@ -33,6 +53,7 @@ function BMICalculator() {
     setHeight('')
     setBmi(null)
     setCategory('')
+    setWeightRecommendation('')
   }
 
   return (
@@ -89,6 +110,11 @@ function BMICalculator() {
             <div className={`bmi-category ${category.toLowerCase()}`}>
               {category}
             </div>
+            {weightRecommendation && (
+              <div className="weight-recommendation">
+                {weightRecommendation}
+              </div>
+            )}
             <div className="bmi-info">
               <h4>Kategori BMI:</h4>
               <ul>

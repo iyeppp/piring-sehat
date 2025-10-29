@@ -15,7 +15,7 @@ function App({ userEmail, onLogout, onOpenLogin }) {
         onLogout={onLogout} 
         onOpenLogin={onOpenLogin} 
       />
-
+      
       <main className="content">
         <WelcomeSection />
         <BMICalculator />

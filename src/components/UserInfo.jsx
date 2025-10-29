@@ -7,10 +7,16 @@ function UserInfo({ userEmail, onLogout, isMobile = false }) {
 
   const className = isMobile ? 'user-info-mobile' : 'user-info-desktop'
 
+  const handleLogout = () => {
+    if (window.confirm('Apakah Anda yakin ingin keluar?')) {
+      onLogout()
+    }
+  }
+
   return (
     <div className={className}>
       <span className="user-email">{userEmail}</span>
-      <button onClick={onLogout} className="logout-button">
+      <button onClick={handleLogout} className="logout-button">
         Keluar
       </button>
     </div>

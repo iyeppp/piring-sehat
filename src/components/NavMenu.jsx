@@ -1,13 +1,13 @@
 import './NavMenu.css'
 import UserInfo from './UserInfo'
 
-function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin }) {
+function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin, activeSection }) {
   const menuItems = [
-    { href: '#home', label: 'Home', isActive: true },
-    { href: '#bmi', label: 'BMI', isActive: false },
-    { href: '#cari', label: 'Cari Makanan', isActive: false },
-    { href: '#hitung', label: 'Hitung Kalori', isActive: false },
-    { href: '#tentang', label: 'Tentang Kami', isActive: false },
+    { href: '#home', label: 'Home', id: 'home' },
+    { href: '#bmi', label: 'BMI', id: 'bmi' },
+    { href: '#cari', label: 'Cari Makanan', id: 'cari' },
+    { href: '#hitung', label: 'Hitung Kalori', id: 'hitung' },
+    { href: '#tentang', label: 'Tentang Kami', id: 'tentang' },
   ]
 
   return (
@@ -17,7 +17,7 @@ function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin }) {
           <li key={item.href} className="navbar-item">
             <a 
               href={item.href} 
-              className={`navbar-link ${item.isActive ? 'active' : ''}`} 
+              className={`navbar-link ${activeSection === item.id ? 'active' : ''}`} 
               onClick={onClose}
             >
               {item.label}
