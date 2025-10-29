@@ -19,7 +19,14 @@
 
 /* Brand Logo */
 .navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0rem;
   flex-shrink: 0;
+}
+
+.brand-img {
+  height: 3rem; /* Match navbar height */
 }
 
 .brand-logo {

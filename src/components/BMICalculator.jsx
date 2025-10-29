@@ -4,6 +4,7 @@ import './BMICalculator.css'
 function BMICalculator() {
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
+  const [gender, setGender] = useState('male')
   const [bmi, setBmi] = useState(null)
   const [category, setCategory] = useState('')
   const [weightRecommendation, setWeightRecommendation] = useState('')
@@ -51,6 +52,7 @@ function BMICalculator() {
   const resetCalculator = () => {
     setWeight('')
     setHeight('')
+    setGender('male')
     setBmi(null)
     setCategory('')
     setWeightRecommendation('')
@@ -91,6 +93,32 @@ function BMICalculator() {
               step="0.1"
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label>Jenis Kelamin</label>
+            <div className="gender-options">
+              <label className="gender-label">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  checked={gender === 'male'}
+                  onChange={(e) => setGender(e.target.value)}
+                />
+                Laki-laki
+              </label>
+              <label className="gender-label">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  checked={gender === 'female'}
+                  onChange={(e) => setGender(e.target.value)}
+                />
+                Perempuan
+              </label>
+            </div>
           </div>
 
           <div className="form-buttons">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './Navbar.css'
+import designImg from '../assets/Desain tanpa judul (11).png'
 import HamburgerButton from './HamburgerButton'
 import NavMenu from './NavMenu'
 import UserInfo from './UserInfo'
