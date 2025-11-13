@@ -23,7 +23,7 @@ function CariMakanan() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Cari nama makanan..."
+              placeholder="Cari Makanan"
               className="search-input"
             />
             <button type="submit" className="search-button">

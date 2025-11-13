@@ -50,6 +50,7 @@
 }
 
 .search-input {
+  text-align: center;
   flex: 1;
   padding: 15px 20px;
   border: none;
@@ -64,11 +65,12 @@
   border: none;
   color: white;
   cursor: pointer;
-  transition: opacity 0.3s;
 }
 
 .search-button:hover {
-  opacity: 0.9;
+  opacity: 0.8;
+  transition: none;
+  transform: none;
 }
 
 .empty-state {
