@@ -37,7 +37,7 @@ a {
 }
 
 a:hover {
-  color: #059669;
+  color: lightcyan; /* mengganti warna link saat hover*/
 }
 
 button {
