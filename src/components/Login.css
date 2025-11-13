@@ -17,32 +17,6 @@
   position: relative;
 }
 
-/* Back Button */
-.login-back-btn {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  background: transparent;
-  border: none;
-  color: #10b981;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-
-.login-back-btn:hover {
-  background-color: #10b981;
-  color: white;
-  transform: translateX(-3px);
-}
-
 .login-header {
   text-align: center;
   margin-bottom: 2rem;
@@ -146,11 +120,15 @@
   cursor: pointer;
   transition: all 0.3s ease;
   padding: 5px;
+  border-radius: 8px;
 }
 
 .link-button:hover {
-  color: #059669;
-  text-decoration: underline;
+  background-color: #059669; 
+  color: #ffffff; 
+  text-decoration: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .separator {
@@ -171,11 +149,5 @@
 
   .login-header h1 {
     font-size: 1.75rem;
-  }
-
-  .login-back-btn {
-    top: 0.5rem;
-    left: 0.5rem;
-    font-size: 0.8rem;
   }
 }

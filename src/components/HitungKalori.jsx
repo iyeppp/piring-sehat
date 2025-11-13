@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './HitungKalori.css'
 
-function HitungKalori({ userEmail, onOpenLogin }) {
+function HitungKalori({ userEmail, onOpenLogin, isAuthenticated }) {
   const [foodName, setFoodName] = useState('')
   const [calories, setCalories] = useState('')
   const [calorieEntries, setCalorieEntries] = useState([])
@@ -32,7 +32,7 @@ function HitungKalori({ userEmail, onOpenLogin }) {
   }
 
   // Locked state when not logged in
-  if (!userEmail) {
+  if (!isAuthenticated || !userEmail) {
     return (
       <section id="hitung" className="hitung-section">
         <div className="hitung-container">
