@@ -1,7 +1,7 @@
 import './NavMenu.css'
 import UserInfo from './UserInfo'
 
-function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin, activeSection }) {
+function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin, activeSection, isAuthenticated }) {
   const menuItems = [
     { href: '#home', label: 'Home', id: 'home' },
     { href: '#tentang', label: 'Tentang Kami', id: 'tentang' },
@@ -27,7 +27,7 @@ function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin, activeSect
       </ul>
 
       {/* User Info Mobile - hanya muncul jika sudah login */}
-      {userEmail ? (
+      {isAuthenticated && userEmail ? (
         <UserInfo userEmail={userEmail} onLogout={onLogout} isMobile={true} />
       ) : (
         <div className="login-btn-mobile">

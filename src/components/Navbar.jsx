@@ -4,7 +4,7 @@ import HamburgerButton from './HamburgerButton'
 import NavMenu from './NavMenu'
 import UserInfo from './UserInfo'
 
-function Navbar({ userEmail, onLogout, onOpenLogin }) {
+function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
 
@@ -64,10 +64,11 @@ function Navbar({ userEmail, onLogout, onOpenLogin }) {
             onLogout={onLogout}
             onOpenLogin={onOpenLogin}
             activeSection={activeSection}
+            isAuthenticated={isAuthenticated}
           />
 
           {/* User Info Desktop / Login Button */}
-          {userEmail ? (
+          {isAuthenticated && userEmail ? (
             <UserInfo userEmail={userEmail} onLogout={onLogout} isMobile={false} />
           ) : (
             <button onClick={onOpenLogin} className="navbar-login-btn">

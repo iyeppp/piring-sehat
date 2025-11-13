@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar'
 import WelcomeSection from './components/WelcomeSection'
@@ -7,13 +8,24 @@ import HitungKalori from './components/HitungKalori'
 import TentangKami from './components/TentangKami'
 import Footer from './components/Footer'
 
-function App({ userEmail, onLogout, onOpenLogin }) {
+function App({ userEmail, onLogout, isAuthenticated }) {
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    onLogout()
+  }
+
+  const handleOpenLogin = () => {
+    navigate('/login')
+  }
+
   return (
     <div className="app">
       <Navbar 
         userEmail={userEmail} 
-        onLogout={onLogout} 
-        onOpenLogin={onOpenLogin} 
+        onLogout={isAuthenticated ? handleLogout : null}
+        isAuthenticated={isAuthenticated}
+        onOpenLogin={handleOpenLogin}
       />
       
       <main className="content">
@@ -21,7 +33,7 @@ function App({ userEmail, onLogout, onOpenLogin }) {
         <TentangKami />
         <BMICalculator />
         <CariMakanan />
-        <HitungKalori userEmail={userEmail} onOpenLogin={onOpenLogin} />
+        <HitungKalori userEmail={userEmail} onOpenLogin={handleOpenLogin} isAuthenticated={isAuthenticated} />
       </main>
 
       <Footer />
