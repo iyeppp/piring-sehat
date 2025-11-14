@@ -1,69 +1,81 @@
-import { useState } from 'react'
-import './BMICalculator.css'
+import { useState } from "react";
+import "./BMICalculator.css";
 
 function BMICalculator() {
-  const [gender, setGender] = useState('')
-  const [weight, setWeight] = useState('')
-  const [height, setHeight] = useState('')
-  const [bmi, setBmi] = useState(null)
-  const [category, setCategory] = useState('')
-  const [weightRecommendation, setWeightRecommendation] = useState('')
+  const [gender, setGender] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [bmi, setBmi] = useState(null);
+  const [category, setCategory] = useState("");
+  const [weightRecommendation, setWeightRecommendation] = useState("");
+  const [genderError, setGenderError] = useState("");
 
   const calculateBMI = (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
+    if (!gender) {
+      setGenderError(
+        "Silakan pilih jenis kelamin terlebih dahulu sebelum menghitung BMI"
+      );
+      return;
+    } else {
+      setGenderError("");
+    }
+
     if (weight && height) {
-      const heightInMeters = height / 100
-      const bmiValue = (weight / (heightInMeters * heightInMeters)).toFixed(1)
-      setBmi(bmiValue)
-      
+      const heightInMeters = height / 100;
+      const bmiValue = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+      setBmi(bmiValue);
+
       // Calculate weight recommendation
-      let recommendation = ''
-      const currentWeight = parseFloat(weight)
-      
+      let recommendation = "";
+      const currentWeight = parseFloat(weight);
+
       // Determine category and recommendation
       if (bmiValue < 18.5) {
-        setCategory('Kurus')
+        setCategory("Kurus");
         // Calculate weight needed to reach BMI 18.5 (lower bound of normal)
-        const targetWeight = 18.5 * (heightInMeters * heightInMeters)
-        const weightNeeded = (targetWeight - currentWeight).toFixed(1)
-        recommendation = `Anda membutuhkan ${weightNeeded} kg lagi untuk mencapai kategori ideal (BMI 18.5).`
+        const targetWeight = 18.5 * (heightInMeters * heightInMeters);
+        const weightNeeded = (targetWeight - currentWeight).toFixed(1);
+        recommendation = `Anda membutuhkan ${weightNeeded} kg lagi untuk mencapai kategori ideal (BMI 18.5).`;
       } else if (bmiValue >= 18.5 && bmiValue < 25) {
-        setCategory('Normal')
-        recommendation = ''
+        setCategory("Normal");
+        recommendation = "";
       } else if (bmiValue >= 25 && bmiValue < 30) {
-        setCategory('Gemuk')
+        setCategory("Gemuk");
         // Calculate weight needed to lose to reach BMI 24.9 (upper bound of normal)
-        const targetWeight = 24.9 * (heightInMeters * heightInMeters)
-        const weightToLose = (currentWeight - targetWeight).toFixed(1)
-        recommendation = `Anda perlu diet ${weightToLose} kg untuk mencapai kategori ideal (BMI 24.9).`
+        const targetWeight = 24.9 * (heightInMeters * heightInMeters);
+        const weightToLose = (currentWeight - targetWeight).toFixed(1);
+        recommendation = `Anda perlu diet ${weightToLose} kg untuk mencapai kategori ideal (BMI 24.9).`;
       } else {
-        setCategory('Obesitas')
+        setCategory("Obesitas");
         // Calculate weight needed to lose to reach BMI 24.9
-        const targetWeight = 24.9 * (heightInMeters * heightInMeters)
-        const weightToLose = (currentWeight - targetWeight).toFixed(1)
-        recommendation = `Anda perlu diet ${weightToLose} kg untuk mencapai kategori ideal (BMI 24.9).`
+        const targetWeight = 24.9 * (heightInMeters * heightInMeters);
+        const weightToLose = (currentWeight - targetWeight).toFixed(1);
+        recommendation = `Anda perlu diet ${weightToLose} kg untuk mencapai kategori ideal (BMI 24.9).`;
       }
-      
-      setWeightRecommendation(recommendation)
+
+      setWeightRecommendation(recommendation);
     }
-  }
+  };
 
   const resetCalculator = () => {
-    setGender('')
-    setWeight('')
-    setHeight('')
-    setBmi(null)
-    setCategory('')
-    setWeightRecommendation('')
-  }
+    setGender("");
+    setWeight("");
+    setHeight("");
+    setBmi(null);
+    setCategory("");
+    setWeightRecommendation("");
+    setGenderError("");
+  };
 
   return (
     <section id="bmi" className="bmi-section">
       <div className="bmi-container">
         <h2 className="bmi-title">Kalkulator BMI</h2>
         <p className="bmi-description">
-          Hitung Body Mass Index (BMI) Anda untuk mengetahui kategori berat badan Anda
+          Hitung Body Mass Index (BMI) Anda untuk mengetahui kategori berat
+          badan Anda
         </p>
 
         <form onSubmit={calculateBMI} className="bmi-form">
@@ -75,9 +87,8 @@ function BMICalculator() {
                   type="radio"
                   name="gender"
                   value="laki-laki"
-                  checked={gender === 'laki-laki'}
+                  checked={gender === "laki-laki"}
                   onChange={(e) => setGender(e.target.value)}
-                  required
                 />
                 <span className="gender-text">Laki-laki</span>
               </label>
@@ -86,13 +97,13 @@ function BMICalculator() {
                   type="radio"
                   name="gender"
                   value="perempuan"
-                  checked={gender === 'perempuan'}
+                  checked={gender === "perempuan"}
                   onChange={(e) => setGender(e.target.value)}
-                  required
                 />
                 <span className="gender-text">Perempuan</span>
               </label>
             </div>
+            {genderError && <p className="error-text">⚠️{genderError}</p>}
           </div>
 
           <div className="form-group">
@@ -127,7 +138,11 @@ function BMICalculator() {
             <button type="submit" className="btn-calculate">
               Hitung BMI
             </button>
-            <button type="button" onClick={resetCalculator} className="btn-reset">
+            <button
+              type="button"
+              onClick={resetCalculator}
+              className="btn-reset"
+            >
               Reset
             </button>
           </div>
@@ -158,7 +173,7 @@ function BMICalculator() {
         )}
       </div>
     </section>
-  )
+  );
 }
 
-export default BMICalculator
+export default BMICalculator;

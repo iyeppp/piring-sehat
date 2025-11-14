@@ -243,6 +243,20 @@
   border-bottom: none;
 }
 
+.error-text {
+  color: #e74c3c;
+  background-color: #fdecea;
+  border: 1px solid #f5c6cb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: shake 0.3s ease-in-out;
+}
+
 @media (max-width: 768px) {
   .bmi-section {
     padding: 60px 15px 30px;
