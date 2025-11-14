@@ -3,6 +3,7 @@ import './Navbar.css'
 import HamburgerButton from './HamburgerButton'
 import NavMenu from './NavMenu'
 import UserInfo from './UserInfo'
+import logo from '../assets/new-logo.png' 
 
 function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -19,7 +20,7 @@ function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['home', 'tentang', 'bmi', 'cari', 'hitung']
-      const scrollPosition = window.scrollY + 100 // offset for navbar height
+      const scrollPosition = window.scrollY + 100
 
       for (const section of sections) {
         const element = document.getElementById(section)
@@ -34,29 +35,27 @@ function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
     }
 
     window.addEventListener('scroll', handleScroll)
-    handleScroll() // Call once on mount
+    handleScroll()
 
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   return (
     <>
-      {/* Overlay for mobile menu */}
       {isMenuOpen && (
         <div className="menu-overlay" onClick={closeMenu}></div>
       )}
 
-      {/* Navbar */}
       <nav className="navbar">
         <div className="navbar-container">
+
           <div className="navbar-brand">
+            <img src={logo} alt="PiringSehat Logo" className="brand-image" />
             <h1 className="brand-logo">PiringSehat</h1>
           </div>
 
-          {/* Hamburger Button */}
           <HamburgerButton isOpen={isMenuOpen} onClick={toggleMenu} />
-          
-          {/* Navigation Menu */}
+
           <NavMenu
             isOpen={isMenuOpen}
             onClose={closeMenu}
@@ -67,7 +66,6 @@ function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
             isAuthenticated={isAuthenticated}
           />
 
-          {/* User Info Desktop / Login Button */}
           {isAuthenticated && userEmail ? (
             <UserInfo userEmail={userEmail} onLogout={onLogout} isMobile={false} />
           ) : (
