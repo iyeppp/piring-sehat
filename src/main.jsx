@@ -3,8 +3,13 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
-import Login from './components/Login.jsx'
-import Register from './components/Register.jsx'
+import Login from './components/auth/Login.jsx'
+import Register from './components/auth/Register.jsx'
+import WelcomeSection from './components/sections/WelcomeSection'
+import TentangKami from './components/sections/TentangKami'
+import BMICalculator from './components/sections/BMICalculator'
+import CariMakanan from './components/sections/CariMakanan'
+import HitungKalori from './components/sections/HitungKalori'
 
 function MainApp() {
   const [username, setUsername] = useState('')
@@ -36,7 +41,6 @@ function MainApp() {
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
         
-        {/* Home Route - Dapat diakses dengan atau tanpa login */}
         <Route 
           path="/" 
           element={
@@ -46,7 +50,20 @@ function MainApp() {
               isAuthenticated={isAuthenticated}
             />
           } 
-        />
+        >
+          <Route 
+            index 
+            element={
+              <>
+                <WelcomeSection />
+                <TentangKami />
+              </>
+            } 
+          />
+          <Route path="bmi" element={<BMICalculator />} />
+          <Route path="cari-makanan" element={<CariMakanan />} />
+          <Route path="hitung-kalori" element={<HitungKalori />} />
+        </Route>
 
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import './HitungKalori.css'
 
-function HitungKalori({ userEmail, onOpenLogin, isAuthenticated }) {
+function HitungKalori() {
+  const { userEmail, onOpenLogin, isAuthenticated } = useOutletContext()
   const [foodName, setFoodName] = useState('')
   const [calories, setCalories] = useState('')
   const [calorieEntries, setCalorieEntries] = useState([])

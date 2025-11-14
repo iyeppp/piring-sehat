@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './Navbar.css'
 import HamburgerButton from './HamburgerButton'
 import NavMenu from './NavMenu'
 import UserInfo from './UserInfo'
-import logo from '../assets/new-logo.png' 
+import logo from '../../assets/new-logo.png' 
 
 function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('home')
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -16,29 +15,6 @@ function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
   const closeMenu = () => {
     setIsMenuOpen(false)
   }
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'tentang', 'bmi', 'cari', 'hitung']
-      const scrollPosition = window.scrollY + 100
-
-      for (const section of sections) {
-        const element = document.getElementById(section)
-        if (element) {
-          const { offsetTop, offsetHeight } = element
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section)
-            break
-          }
-        }
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    handleScroll()
-
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   return (
     <>
@@ -62,7 +38,6 @@ function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
             userEmail={userEmail}
             onLogout={onLogout}
             onOpenLogin={onOpenLogin}
-            activeSection={activeSection}
             isAuthenticated={isAuthenticated}
           />
 

@@ -1,26 +1,27 @@
+import { NavLink } from 'react-router-dom'
 import './NavMenu.css'
 import UserInfo from './UserInfo'
 
-function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin, activeSection, isAuthenticated }) {
+function NavMenu({ isOpen, onClose, userEmail, onLogout, onOpenLogin, isAuthenticated }) {
   const menuItems = [
-    { href: '#home', label: 'Home', id: 'home' },
-    { href: '#bmi', label: 'BMI', id: 'bmi' },
-    { href: '#cari', label: 'Cari Makanan', id: 'cari' },
-    { href: '#hitung', label: 'Hitung Kalori', id: 'hitung' },
+    { to: '/', label: 'Home' },
+    { to: '/bmi', label: 'BMI' },
+    { to: '/cari-makanan', label: 'Cari Makanan' },
+    { to: '/hitung-kalori', label: 'Hitung Kalori' },
   ]
 
   return (
     <div className={`navbar-menu ${isOpen ? 'active' : ''}`}>
       <ul className="menu-list">
         {menuItems.map((item) => (
-          <li key={item.href} className="navbar-item">
-            <a 
-              href={item.href} 
-              className={`navbar-link ${activeSection === item.id ? 'active' : ''}`} 
+          <li key={item.to} className="navbar-item">
+            <NavLink 
+              to={item.to} 
+              className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`} 
               onClick={onClose}
             >
               {item.label}
-            </a>
+            </NavLink>
           </li>
         ))}
       </ul>

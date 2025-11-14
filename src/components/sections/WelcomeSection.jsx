@@ -1,5 +1,5 @@
 import './WelcomeSection.css'
-import logo from '../assets/new-logo.png'
+import logo from '../../assets/new-logo.png'
 
 function WelcomeSection() {
   return (
