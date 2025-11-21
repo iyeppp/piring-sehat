@@ -13,6 +13,7 @@ import Register from "./components/auth/Register.jsx";
 import ForgotPassword from "./components/auth/ForgotPassword.jsx";
 import WelcomeSection from "./components/sections/WelcomeSection";
 import TentangKami from "./components/sections/TentangKami";
+import TestimoniSection from "./components/sections/TestimoniSection";
 import BMICalculator from "./components/sections/BMICalculator";
 import GeneticHeightCalculator from "./components/sections/GeneticHeightCalculator";
 import ProteinCalculator from "./components/sections/ProteinCalculator";
@@ -69,6 +70,7 @@ function MainApp() {
               <>
                 <WelcomeSection />
                 <TentangKami />
+                <TestimoniSection />
               </>
             }
           />
