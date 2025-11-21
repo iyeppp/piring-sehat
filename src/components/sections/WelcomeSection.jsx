@@ -6,14 +6,15 @@ function WelcomeSection() {
     <section id="home" className="welcome">
       <div className="welcome-content">
         <div className="welcome-text">
-          <h2>Selamat Datang!</h2>
+          <span className="welcome-badge">Platform Edukasi Gizi & Tracking Kalori</span>
+          <h2>Hidup Sehat Dimulai dari Piring Anda.</h2>
           <p>
-            Website ini membantu Anda memahami pola makan sehat dan seimbang
-            untuk hidup lebih berkualitas.
+            PiringSehat membantu Anda memahami pola makan yang seimbang,
+            agar setiap porsi yang Anda pilih membawa tubuh lebih bugar dan kuat.
           </p>
           <p className="welcome-desc">
-            Mulai perjalanan Anda menuju gaya hidup sehat dengan panduan nutrisi 
-            yang tepat. Piring sehat adalah kunci untuk tubuh yang bugar dan energik!
+            Jelajahi panduan nutrisi, kalkulator kesehatan, dan fitur pencatatan
+            yang dirancang untuk menemani perjalanan Anda menuju gaya hidup sehat.
           </p>
         </div>
         <div className="welcome-image">
