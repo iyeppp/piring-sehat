@@ -1,7 +1,13 @@
-.cari-section {
+.cari-background {
+  width: 100%;
   min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat-y;
+}
+.cari-section {
   padding: 80px 20px 40px;
-  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,7 +16,7 @@
 .cari-container {
   max-width: 800px;
   width: 100%;
-  background: white;
+  background: #F1F1F1;
   border-radius: 20px;
   padding: 40px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
@@ -38,7 +44,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: #f5f5f5;
+  background: #F5F5F5;
   border-radius: 50px;
   overflow: hidden;
   border: 2px solid #e0e0e0;
@@ -71,6 +77,47 @@
   opacity: 0.8;
   transition: none;
   transform: none;
+}
+
+.cari-jenis {
+  display: flex;
+  justify-content: center;
+  background: transparent;
+  height: 25vw;
+  flex-direction: column;
+  padding: 0vw 1vw 0vw;
+}
+
+.cari-judul-jenis {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 15px;
+  font-size: 1.9rem;
+}
+
+.kotak-kecil2 {
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+  height: 18vw;
+}
+
+.kotak-kotak {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(187, 187, 187);
+  height: 16vw;
+  width: 15vw;
+  margin: 1vw 1vw 2vw;
+  border-radius: 10px;
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.kotak-kotak:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  transition: all 300ms;
 }
 
 .empty-state {
