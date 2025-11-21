@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import Login from './components/auth/Login.jsx'
 import Register from './components/auth/Register.jsx'
+import ForgotPassword from './components/auth/ForgotPassword.jsx'
 import WelcomeSection from './components/sections/WelcomeSection'
 import TentangKami from './components/sections/TentangKami'
 import BMICalculator from './components/sections/BMICalculator'
@@ -40,6 +41,7 @@ function MainApp() {
         {/* Public Routes */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         
         <Route 
           path="/" 

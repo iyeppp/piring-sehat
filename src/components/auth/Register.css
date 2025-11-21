@@ -165,6 +165,65 @@
   box-shadow: none;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.divider span {
+  color: #999;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.oauth-button {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.oauth-button:hover {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.oauth-button:active {
+  transform: scale(0.98);
+}
+
+.oauth-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.oauth-icon {
+  font-size: 1.2rem;
+  width: 20px;
+  height: 20px;
+}
+
 @media (max-width: 480px) {
   .register-card {
     padding: 30px 20px;
@@ -176,5 +235,10 @@
 
   .form-input {
     font-size: 16px; /* Prevent zoom on mobile */
+  }
+
+  .oauth-button {
+    font-size: 0.9rem;
+    padding: 0.65rem;
   }
 }
