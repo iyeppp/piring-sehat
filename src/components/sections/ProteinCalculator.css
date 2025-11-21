@@ -1,0 +1,242 @@
+.protein-section {
+  min-height: 100vh;
+  padding: 80px 20px 40px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.protein-container {
+  max-width: 600px;
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.protein-title {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.protein-description {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.protein-form {
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+/* Gender Selection Styling (if used) */
+.gender-group {
+  margin-bottom: 25px;
+}
+
+.gender-label {
+  display: block;
+  margin-bottom: 12px;
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.gender-options {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.gender-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: white;
+}
+
+.gender-option:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.gender-option input[type="radio"] {
+  display: none;
+}
+
+.gender-option input[type="radio"]:checked + .gender-text {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.gender-option:has(input[type="radio"]:checked) {
+  border-color: #10b981;
+  background: #f0fdf4;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.gender-text {
+  font-size: 1rem;
+  color: #666;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn-calculate,
+.btn-reset,
+.btn-calc {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-calculate,
+.btn-calc {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.btn-calculate:hover,
+.btn-calc:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-reset {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.btn-reset:hover {
+  background: #e0e0e0;
+}
+
+.protein-result {
+  text-align: center;
+  padding: 30px;
+  background: #f0fdf4;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+.protein-result h3 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.protein-value {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #10b981;
+  margin-bottom: 15px;
+}
+
+.weight-recommendation {
+  background: #e0f2fe;
+  border-left: 4px solid #0284c7;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 20px 0;
+  color: #0c4a6e;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.error-text {
+  color: #e74c3c;
+  background-color: #fdecea;
+  border: 1px solid #f5c6cb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: shake 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .protein-section {
+    padding: 60px 15px 30px;
+  }
+
+  .protein-container {
+    padding: 30px 20px;
+  }
+
+  .protein-title {
+    font-size: 2rem;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+  }
+
+  .gender-options {
+    gap: 10px;
+  }
+
+  .gender-option {
+    padding: 12px 15px;
+  }
+
+  .gender-text {
+    font-size: 0.95rem;
+  }
+
+  .protein-value {
+    font-size: 2.5rem;
+  }
+}

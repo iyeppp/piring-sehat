@@ -1,5 +1,7 @@
 import { useState } from "react";
 import "./BMICalculator.css";
+import GeneticHeightCalculator from "./GeneticHeightCalculator";
+import ProteinCalculator from "./ProteinCalculator";
 
 function BMICalculator() {
   const [gender, setGender] = useState("");
@@ -70,109 +72,113 @@ function BMICalculator() {
   };
 
   return (
-    <section id="bmi" className="bmi-section">
-      <div className="bmi-container">
-        <h2 className="bmi-title">Kalkulator BMI</h2>
-        <p className="bmi-description">
-          Hitung Body Mass Index (BMI) Anda untuk mengetahui kategori berat
-          badan Anda
-        </p>
+    <>
+      <section id="bmi" className="bmi-section">
+        <div className="bmi-container">
+          <h2 className="bmi-title">Kalkulator BMI</h2>
+          <p className="bmi-description">
+            Hitung Body Mass Index (BMI) Anda untuk mengetahui kategori berat
+            badan Anda
+          </p>
 
-        <form onSubmit={calculateBMI} className="bmi-form">
-          <div className="form-group gender-group">
-            <label className="gender-label">Jenis Kelamin</label>
-            <div className="gender-options">
-              <label className="gender-option">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="laki-laki"
-                  checked={gender === "laki-laki"}
-                  onChange={(e) => setGender(e.target.value)}
-                />
-                <span className="gender-text">Laki-laki</span>
-              </label>
-              <label className="gender-option">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="perempuan"
-                  checked={gender === "perempuan"}
-                  onChange={(e) => setGender(e.target.value)}
-                />
-                <span className="gender-text">Perempuan</span>
-              </label>
-            </div>
-            {genderError && <p className="error-text">⚠️{genderError}</p>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="weight">Berat Badan (kg)</label>
-            <input
-              type="number"
-              id="weight"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              placeholder="Masukkan berat badan"
-              min="1"
-              step="0.1"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="height">Tinggi Badan (cm)</label>
-            <input
-              type="number"
-              id="height"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              placeholder="Masukkan tinggi badan"
-              min="1"
-              step="0.1"
-              required
-            />
-          </div>
-
-          <div className="form-buttons">
-            <button type="submit" className="btn-calculate">
-              Hitung BMI
-            </button>
-            <button
-              type="button"
-              onClick={resetCalculator}
-              className="btn-reset"
-            >
-              Reset
-            </button>
-          </div>
-        </form>
-
-        {bmi && (
-          <div className="bmi-result">
-            <h3>Hasil BMI Anda</h3>
-            <div className="bmi-value">{bmi}</div>
-            <div className={`bmi-category ${category.toLowerCase()}`}>
-              {category}
-            </div>
-            {weightRecommendation && (
-              <div className="weight-recommendation">
-                {weightRecommendation}
+          <form onSubmit={calculateBMI} className="bmi-form">
+            <div className="form-group gender-group">
+              <label className="gender-label">Jenis Kelamin</label>
+              <div className="gender-options">
+                <label className="gender-option">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="laki-laki"
+                    checked={gender === "laki-laki"}
+                    onChange={(e) => setGender(e.target.value)}
+                  />
+                  <span className="gender-text">Laki-laki</span>
+                </label>
+                <label className="gender-option">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="perempuan"
+                    checked={gender === "perempuan"}
+                    onChange={(e) => setGender(e.target.value)}
+                  />
+                  <span className="gender-text">Perempuan</span>
+                </label>
               </div>
-            )}
-            <div className="bmi-info">
-              <h4>Kategori BMI:</h4>
-              <ul>
-                <li>Kurus: BMI &lt; 18.5</li>
-                <li>Normal: BMI 18.5 - 24.9</li>
-                <li>Gemuk: BMI 25 - 29.9</li>
-                <li>Obesitas: BMI ≥ 30</li>
-              </ul>
+              {genderError && <p className="error-text">⚠️{genderError}</p>}
             </div>
-          </div>
-        )}
-      </div>
-    </section>
+
+            <div className="form-group">
+              <label htmlFor="weight">Berat Badan (kg)</label>
+              <input
+                type="number"
+                id="weight"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                placeholder="Masukkan berat badan"
+                min="1"
+                step="0.1"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="height">Tinggi Badan (cm)</label>
+              <input
+                type="number"
+                id="height"
+                value={height}
+                onChange={(e) => setHeight(e.target.value)}
+                placeholder="Masukkan tinggi badan"
+                min="1"
+                step="0.1"
+                required
+              />
+            </div>
+
+            <div className="form-buttons">
+              <button type="submit" className="btn-calculate">
+                Hitung BMI
+              </button>
+              <button
+                type="button"
+                onClick={resetCalculator}
+                className="btn-reset"
+              >
+                Reset
+              </button>
+            </div>
+          </form>
+
+          {bmi && (
+            <div className="bmi-result">
+              <h3>Hasil BMI Anda</h3>
+              <div className="bmi-value">{bmi}</div>
+              <div className={`bmi-category ${category.toLowerCase()}`}>
+                {category}
+              </div>
+              {weightRecommendation && (
+                <div className="weight-recommendation">
+                  {weightRecommendation}
+                </div>
+              )}
+              <div className="bmi-info">
+                <h4>Kategori BMI:</h4>
+                <ul>
+                  <li>Kurus: BMI &lt; 18.5</li>
+                  <li>Normal: BMI 18.5 - 24.9</li>
+                  <li>Gemuk: BMI 25 - 29.9</li>
+                  <li>Obesitas: BMI ≥ 30</li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+      <GeneticHeightCalculator />
+      <ProteinCalculator />
+    </>
   );
 }
 
