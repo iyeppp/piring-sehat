@@ -137,8 +137,12 @@
   }
 
   .login-btn-mobile .navbar-login-btn {
+    display: block !important;
     width: 100%;
     padding: 1rem 1.5rem;
     font-size: 1rem;
+    text-align: center;
+    background-color: white;
+    color: #10b981;
   }
 }
