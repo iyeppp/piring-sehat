@@ -3,7 +3,7 @@ import './App.css'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 
-function App({ userEmail, onLogout, isAuthenticated }) {
+function App({ userEmail, supabaseUserId, onLogout, isAuthenticated }) {
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -24,7 +24,7 @@ function App({ userEmail, onLogout, isAuthenticated }) {
       />
       
       <main className="content">
-        <Outlet context={{ userEmail, onOpenLogin: handleOpenLogin, isAuthenticated }} />
+        <Outlet context={{ userEmail, supabaseUserId, onOpenLogin: handleOpenLogin, isAuthenticated }} />
       </main>
 
       <Footer />

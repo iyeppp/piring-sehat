@@ -1,50 +1,80 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
+import { addFoodLog, getFoodLogsByDate, getTotalCaloriesInRange, deleteFoodLog, getDailyNutritionSummary } from '../../services/foodLogService'
+import { getFirstFoodByName, searchFoodsByName } from '../../services/makananService'
 import './HitungKalori.css'
 
 function HitungKalori() {
-  const { userEmail, onOpenLogin, isAuthenticated } = useOutletContext()
+  const { userEmail, supabaseUserId, onOpenLogin, isAuthenticated } = useOutletContext()
   const [foodName, setFoodName] = useState('')
   const [calories, setCalories] = useState('')
   const [calorieEntriesByDate, setCalorieEntriesByDate] = useState({})
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(new Date())
+  const [monthlyCalories, setMonthlyCalories] = useState(0)
+  const [autoFood, setAutoFood] = useState(null)
+  const [autoFillLoading, setAutoFillLoading] = useState(false)
+  const [autoFillError, setAutoFillError] = useState('')
+  const [foodSuggestions, setFoodSuggestions] = useState([])
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+  const [dailyNutrition, setDailyNutrition] = useState({ protein: 0, carbs: 0, fat: 0 })
 
-  const handleAddEntry = (e) => {
+  const handleAddEntry = async (e) => {
     e.preventDefault()
     
+    if (!supabaseUserId) return
+
     if (foodName && calories) {
-      const newEntry = {
-        id: Date.now(),
-        foodName,
-        calories: parseFloat(calories),
-        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-      }
-      
       const dateKey = selectedDate.toISOString().split('T')[0]
+
+      try {
+        const created = await addFoodLog({
+          userId: supabaseUserId,
+          date: dateKey,
+          foodName,
+          calories: parseFloat(calories),
+          foodId: autoFood ? autoFood.id : null,
+        })
+
+        const newEntry = {
+          id: created.id,
+          foodName: created.food_name_custom || foodName,
+          calories: parseFloat(created.calories),
+          time: new Date(created.logged_at || new Date()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+        }
+
+        setCalorieEntriesByDate((prev) => {
+          const current = prev[dateKey] || []
+          return {
+            ...prev,
+            [dateKey]: [...current, newEntry],
+          }
+        })
+        setFoodName('')
+        setCalories('')
+        setAutoFood(null)
+      } catch (error) {
+        console.error('Gagal menambah catatan kalori:', error)
+      }
+    }
+  }
+
+  const handleDeleteEntry = async (id) => {
+    const dateKey = selectedDate.toISOString().split('T')[0]
+
+    try {
+      await deleteFoodLog(id)
 
       setCalorieEntriesByDate((prev) => {
         const current = prev[dateKey] || []
         return {
           ...prev,
-          [dateKey]: [...current, newEntry],
+          [dateKey]: current.filter((entry) => entry.id !== id),
         }
       })
-      setFoodName('')
-      setCalories('')
+    } catch (error) {
+      console.error('Gagal menghapus catatan kalori:', error)
     }
-  }
-
-  const handleDeleteEntry = (id) => {
-    const dateKey = selectedDate.toISOString().split('T')[0]
-
-    setCalorieEntriesByDate((prev) => {
-      const current = prev[dateKey] || []
-      return {
-        ...prev,
-        [dateKey]: current.filter((entry) => entry.id !== id),
-      }
-    })
   }
 
   const getTotalCalories = () => {
@@ -54,18 +84,7 @@ function HitungKalori() {
   }
 
   const getMonthlyCalories = () => {
-    const { year, month } = getMonthInfo(selectedDate)
-
-    return Object.entries(calorieEntriesByDate).reduce((total, [dateKey, entries]) => {
-      const date = new Date(dateKey)
-
-      if (date.getFullYear() === year && date.getMonth() === month) {
-        const dailyTotal = entries.reduce((daySum, entry) => daySum + entry.calories, 0)
-        return total + dailyTotal
-      }
-
-      return total
-    }, 0)
+    return monthlyCalories
   }
 
   const getMonthInfo = (date) => {
@@ -122,6 +141,150 @@ function HitungKalori() {
   })
 
   const weekdayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
+
+  // Autocomplete: cari makanan saat user mengetik
+  useEffect(() => {
+    let active = true
+
+    const loadSuggestions = async () => {
+      const query = foodName.trim()
+      if (!query) {
+        setFoodSuggestions([])
+        return
+      }
+
+      try {
+        setSuggestionsLoading(true)
+        const results = await searchFoodsByName(query, 5)
+        if (!active) return
+        setFoodSuggestions(results)
+      } catch (error) {
+        console.error('Gagal memuat saran makanan:', error)
+        if (active) setFoodSuggestions([])
+      } finally {
+        if (active) setSuggestionsLoading(false)
+      }
+    }
+
+    // debounce sederhana: tunggu 300ms setelah user berhenti mengetik
+    const timeoutId = setTimeout(() => {
+      loadSuggestions()
+    }, 300)
+
+    return () => {
+      active = false
+      clearTimeout(timeoutId)
+    }
+  }, [foodName])
+
+  const handleSelectSuggestion = (food) => {
+    setFoodName(food.name || '')
+    if (food.calories != null) {
+      setCalories(String(food.calories))
+    }
+    setAutoFood(food)
+    setAutoFillError('')
+    setFoodSuggestions([])
+  }
+
+  const handleAutoFillCalories = async () => {
+    if (!foodName) return
+    if (!supabaseUserId) return
+
+    try {
+      setAutoFillError('')
+      setAutoFillLoading(true)
+
+      const food = await getFirstFoodByName(foodName)
+
+      if (!food) {
+        setAutoFillError('Makanan tidak ditemukan di database.')
+        setAutoFood(null)
+        return
+      }
+
+      setAutoFood(food)
+      if (food.calories != null) {
+        setCalories(String(food.calories))
+      }
+    } catch (error) {
+      console.error('Gagal mengisi otomatis dari database:', error)
+      setAutoFillError('Terjadi kesalahan saat mengambil data makanan.')
+    } finally {
+      setAutoFillLoading(false)
+    }
+  }
+
+  // Load entries for selected date from Supabase
+  useEffect(() => {
+    const loadEntries = async () => {
+      if (!supabaseUserId) return
+
+      const dateKey = selectedDate.toISOString().split('T')[0]
+
+      try {
+        const logs = await getFoodLogsByDate(supabaseUserId, dateKey)
+
+        const entries = logs.map((log) => ({
+          id: log.id,
+          foodName: log.food_name_custom,
+          calories: parseFloat(log.calories),
+          time: new Date(log.logged_at || new Date()).toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        }))
+
+        setCalorieEntriesByDate((prev) => ({
+          ...prev,
+          [dateKey]: entries,
+        }))
+      } catch (error) {
+        console.error('Gagal memuat catatan kalori:', error)
+      }
+    }
+
+    loadEntries()
+  }, [selectedDate, supabaseUserId])
+
+  // Load monthly total calories from Supabase
+  useEffect(() => {
+    const loadMonthlyTotal = async () => {
+      if (!supabaseUserId) return
+
+      const { year, month } = getMonthInfo(selectedDate)
+      const startDate = new Date(year, month, 1).toISOString().split('T')[0]
+      const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0]
+
+      try {
+        const total = await getTotalCaloriesInRange(supabaseUserId, startDate, endDate)
+        setMonthlyCalories(total)
+      } catch (error) {
+        console.error('Gagal memuat total kalori bulanan:', error)
+      }
+    }
+
+    loadMonthlyTotal()
+  }, [selectedDate, supabaseUserId])
+
+  // Load daily nutrition summary from Supabase
+  useEffect(() => {
+    const loadNutrition = async () => {
+      if (!supabaseUserId) return
+
+      const dateKey = selectedDate.toISOString().split('T')[0]
+
+      try {
+        const totals = await getDailyNutritionSummary(supabaseUserId, dateKey)
+        setDailyNutrition(totals)
+      } catch (error) {
+        console.error('Gagal memuat ringkasan nutrisi harian:', error)
+        setDailyNutrition({ protein: 0, carbs: 0, fat: 0 })
+      }
+    }
+
+    loadNutrition()
+  }, [selectedDate, supabaseUserId])
 
   // Locked state when not logged in
   if (!isAuthenticated || !userEmail) {
@@ -231,6 +394,18 @@ function HitungKalori() {
                 <span className="summary-value">{getMonthlyCalories()}</span>
                 <span className="summary-unit">kkal</span>
               </div>
+              <div className="summary-card summary-card-nutrition">
+                <span className="summary-label">Ringkasan Nutrisi Hari Ini</span>
+                <span className="summary-unit">
+                  Protein: {dailyNutrition.protein.toFixed(1)} g
+                </span>
+                <span className="summary-unit">
+                  Karbohidrat: {dailyNutrition.carbs.toFixed(1)} g
+                </span>
+                <span className="summary-unit">
+                  Lemak: {dailyNutrition.fat.toFixed(1)} g
+                </span>
+              </div>
             </div>
           </div>
 
@@ -248,6 +423,31 @@ function HitungKalori() {
                     placeholder="Contoh: Nasi Goreng"
                     required
                   />
+                  {foodSuggestions.length > 0 && (
+                    <div className="food-suggestions">
+                      {foodSuggestions.map((food) => (
+                        <button
+                          key={food.id}
+                          type="button"
+                          className="food-suggestion-item"
+                          onClick={() => handleSelectSuggestion(food)}
+                        >
+                          <span className="food-suggestion-name">{food.name}</span>
+                          {food.calories != null && (
+                            <span className="food-suggestion-calories">{food.calories} kkal</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {autoFood && (
+                    <p className="auto-fill-info">
+                      Menggunakan data: {autoFood.name} ({autoFood.calories} kkal)
+                    </p>
+                  )}
+                  {autoFillError && (
+                    <p className="auto-fill-error">{autoFillError}</p>
+                  )}
                 </div>
                 <div className="form-group">
                   <label htmlFor="calories">Kalori (kkal)</label>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from 'firebase/auth'
 import { auth, googleProvider, githubProvider } from '../../firebase'
+import { syncFirebaseUserToSupabase } from '../../services/userService'
 import './Register.css'
 
 function Register({ onRegister }) {
@@ -45,10 +46,13 @@ function Register({ onRegister }) {
         displayName: username
       })
 
+      // 3. Sinkronkan user Firebase ke Supabase
+      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+
       setSuccess('Akun berhasil dibuat! Mengalihkan...')
       
       // Panggil prop onRegister (opsional, buat update state di MainApp)
-      if (onRegister) onRegister(username, email)
+      if (onRegister) onRegister(username, email, supabaseUserId)
 
       // Redirect ke halaman Login setelah 1.5 detik
       setTimeout(() => {
@@ -83,8 +87,11 @@ function Register({ onRegister }) {
       setLoading(true)
       const result = await signInWithPopup(auth, googleProvider)
       const user = result.user
+
+      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+
       setSuccess('Akun berhasil dibuat! Mengalihkan...')
-      if (onRegister) onRegister(user.displayName || user.email.split('@')[0], user.email)
+      if (onRegister) onRegister(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
       setTimeout(() => {
         navigate('/')
       }, 1500)
@@ -107,8 +114,11 @@ function Register({ onRegister }) {
       setLoading(true)
       const result = await signInWithPopup(auth, githubProvider)
       const user = result.user
+
+      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+
       setSuccess('Akun berhasil dibuat! Mengalihkan...')
-      if (onRegister) onRegister(user.displayName || user.email.split('@')[0], user.email)
+      if (onRegister) onRegister(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
       setTimeout(() => {
         navigate('/')
       }, 1500)
