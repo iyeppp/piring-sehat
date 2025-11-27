@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { auth, googleProvider, githubProvider } from '../../firebase'
+import { syncFirebaseUserToSupabase } from '../../services/userService'
 import './Login.css'
 
 function Login({ onLogin }) {
@@ -27,11 +28,14 @@ function Login({ onLogin }) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
 
-      // 2. Update state aplikasi utama
+      // 2. Sinkronkan user Firebase ke Supabase
+      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+
+      // 3. Update state aplikasi utama
       // user.displayName biasanya null kalau baru register tanpa updateProfile, jadi kita kasih fallback
-      onLogin(user.displayName || user.email.split('@')[0], user.email)
+      onLogin(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
       
-      // 3. Redirect ke Home
+      // 4. Redirect ke Home
       navigate('/')
 
     } catch (err) {
@@ -66,7 +70,10 @@ function Login({ onLogin }) {
       setLoading(true)
       const result = await signInWithPopup(auth, googleProvider)
       const user = result.user
-      onLogin(user.displayName || user.email.split('@')[0], user.email)
+
+      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+
+      onLogin(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
       navigate('/')
     } catch (err) {
       console.error(err)
@@ -86,7 +93,10 @@ function Login({ onLogin }) {
       setLoading(true)
       const result = await signInWithPopup(auth, githubProvider)
       const user = result.user
-      onLogin(user.displayName || user.email.split('@')[0], user.email)
+
+      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+
+      onLogin(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
       navigate('/')
     } catch (err) {
       console.error(err)

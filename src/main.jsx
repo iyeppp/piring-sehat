@@ -24,22 +24,26 @@ function MainApp() {
   const [username, setUsername] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [supabaseUserId, setSupabaseUserId] = useState(null);
 
-  const handleLogin = (usernameInput, emailInput) => {
+  const handleLogin = (usernameInput, emailInput, userId) => {
     setUsername(usernameInput);
     setUserEmail(emailInput);
+    setSupabaseUserId(userId || null);
     setIsAuthenticated(true);
   };
 
-  const handleRegister = (usernameInput, emailInput) => {
+  const handleRegister = (usernameInput, emailInput, userId) => {
     setUsername(usernameInput);
     setUserEmail(emailInput);
+    setSupabaseUserId(userId || null);
     setIsAuthenticated(true);
   };
 
   const handleLogout = () => {
     setUsername("");
     setUserEmail("");
+    setSupabaseUserId(null);
     setIsAuthenticated(false);
   };
 
@@ -59,6 +63,7 @@ function MainApp() {
           element={
             <App
               userEmail={isAuthenticated ? username : ""}
+              supabaseUserId={supabaseUserId}
               onLogout={handleLogout}
               isAuthenticated={isAuthenticated}
             />
