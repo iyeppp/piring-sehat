@@ -330,7 +330,6 @@ function HitungKalori() {
                 className="calendar-nav-button"
                 onClick={handlePrevMonth}
               >
-                <FontAwesomeIcon icon={byPrefixAndName.fas['angle-left']} />
               </button>
               <div className="calendar-title">
                 {monthFormatter.format(currentMonth)}
@@ -340,7 +339,6 @@ function HitungKalori() {
                 className="calendar-nav-button"
                 onClick={handleNextMonth}
               >
-                <FontAwesomeIcon icon={byPrefixAndName.fas['angle-right']} />
               </button>
             </div>
 
