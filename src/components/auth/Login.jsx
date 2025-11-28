@@ -12,6 +12,15 @@ function Login({ onLogin }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const getUsername = (user) => {
+    if (!user) return 'pengguna'
+    if (user.displayName) return user.displayName
+    if (user.email) return user.email.split('@')[0]
+    if (user.reloadUserInfo?.screenName) return user.reloadUserInfo.screenName
+    if (user.providerData && user.providerData[0]?.uid) return `user_${user.providerData[0].uid}`
+    return 'pengguna'
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     
@@ -33,7 +42,7 @@ function Login({ onLogin }) {
 
       // 3. Update state aplikasi utama
       // user.displayName biasanya null kalau baru register tanpa updateProfile, jadi kita kasih fallback
-      onLogin(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
+      onLogin(getUsername(user), user.email || '', supabaseUserId)
       
       // 4. Redirect ke Home
       navigate('/')
@@ -73,7 +82,7 @@ function Login({ onLogin }) {
 
       const supabaseUserId = await syncFirebaseUserToSupabase(user)
 
-      onLogin(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
+      onLogin(getUsername(user), user.email || '', supabaseUserId)
       navigate('/')
     } catch (err) {
       console.error(err)
@@ -96,7 +105,7 @@ function Login({ onLogin }) {
 
       const supabaseUserId = await syncFirebaseUserToSupabase(user)
 
-      onLogin(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
+      onLogin(getUsername(user), user.email || '', supabaseUserId)
       navigate('/')
     } catch (err) {
       console.error(err)

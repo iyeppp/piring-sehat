@@ -13,12 +13,11 @@ function Register({ onRegister }) {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [loading, setLoading] = useState(false) // State loading agar tombol tidak dipencet 2x
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Validasi Input Dasar
     if (!username || !email || !password || !confirmPassword) {
       setError('Semua field harus diisi!')
       return
@@ -37,31 +36,25 @@ function Register({ onRegister }) {
       setSuccess('')
       setLoading(true)
 
-      // 1. Buat akun di Firebase
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
 
-      // 2. Update Username (DisplayName) ke Firebase
       await updateProfile(user, {
         displayName: username
       })
 
-      // 3. Sinkronkan user Firebase ke Supabase
       const supabaseUserId = await syncFirebaseUserToSupabase(user)
 
       setSuccess('Akun berhasil dibuat! Mengalihkan...')
       
-      // Panggil prop onRegister (opsional, buat update state di MainApp)
       if (onRegister) onRegister(username, email, supabaseUserId)
 
-      // Redirect ke halaman Login setelah 1.5 detik
       setTimeout(() => {
         navigate('/login')
       }, 1500)
 
     } catch (err) {
       console.error(err)
-      // Error handling Firebase
       if (err.code === 'auth/email-already-in-use') {
         setError('Email sudah terdaftar. Silakan login.')
       } else if (err.code === 'auth/weak-password') {
@@ -118,7 +111,9 @@ function Register({ onRegister }) {
       const supabaseUserId = await syncFirebaseUserToSupabase(user)
 
       setSuccess('Akun berhasil dibuat! Mengalihkan...')
-      if (onRegister) onRegister(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
+      const username = user.displayName || (user.email ? user.email.split('@')[0] : 
+        (user.reloadUserInfo?.screenName || (user.providerData && user.providerData[0]?.uid ? `user_${user.providerData[0].uid}` : 'pengguna')))
+      if (onRegister) onRegister(username, user.email || '', supabaseUserId)
       setTimeout(() => {
         navigate('/')
       }, 1500)
