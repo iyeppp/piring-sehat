@@ -1,4 +1,4 @@
-import { StrictMode, useState } from "react";
+import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import {
   BrowserRouter as Router,
@@ -19,6 +19,9 @@ import GeneticHeightCalculator from "./components/sections/GeneticHeightCalculat
 import ProteinCalculator from "./components/sections/ProteinCalculator";
 import CariMakanan from "./components/sections/CariMakanan";
 import HitungKalori from "./components/sections/HitungKalori";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "./firebase";
+import { syncFirebaseUserToSupabase } from "./services/userService";
 
 function MainApp() {
   const [username, setUsername] = useState("");
@@ -41,11 +44,46 @@ function MainApp() {
   };
 
   const handleLogout = () => {
+    // sign out from Firebase to clear persisted session
+    signOut(auth).catch(() => {/* ignore */})
     setUsername("");
     setUserEmail("");
     setSupabaseUserId(null);
     setIsAuthenticated(false);
   };
+
+  useEffect(() => {
+    const getUsername = (user) => {
+      if (!user) return "";
+      if (user.displayName) return user.displayName;
+      if (user.email) return user.email.split("@")[0];
+      if (user.reloadUserInfo?.screenName) return user.reloadUserInfo.screenName;
+      if (user.providerData && user.providerData[0]?.uid) return `user_${user.providerData[0].uid}`;
+      return "";
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        let userId = null;
+        try {
+          userId = await syncFirebaseUserToSupabase(user);
+        } catch (_) {
+          // ignore sync error for restoring session
+        }
+        setUsername(getUsername(user));
+        setUserEmail(user.email || "");
+        setSupabaseUserId(userId);
+        setIsAuthenticated(true);
+      } else {
+        setUsername("");
+        setUserEmail("");
+        setSupabaseUserId(null);
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <Router>

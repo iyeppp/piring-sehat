@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GithubAuthProvider, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GithubAuthProvider, GoogleAuthProvider, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Firebase configuration
@@ -17,6 +17,11 @@ const app = initializeApp(firebaseConfig);
 
 // Export auth
 export const auth = getAuth(app);
+
+// Ensure auth persists across tabs and refresh
+setPersistence(auth, browserLocalPersistence).catch(() => {
+  // ignore persistence errors silently
+});
 
 // Export Firestore
 export const db = getFirestore(app);
