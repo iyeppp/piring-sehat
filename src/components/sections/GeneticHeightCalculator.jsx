@@ -52,10 +52,10 @@ export default function GeneticHeightCalculator() {
         </p>
 
         <form onSubmit={calculate} className="genetic-form">
-          <div className="form-group">
+          <div className="genetic-form-group">
             <label>Jenis Kelamin Anak</label>
-            <div className="gender-options">
-              <label className="gender-option">
+            <div className="genetic-gender-options">
+              <label className="genetic-gender-option">
                 <input
                   type="radio"
                   name="childGender"
@@ -66,9 +66,9 @@ export default function GeneticHeightCalculator() {
                     setGenderError("");
                   }}
                 />
-                <span className="gender-text">Laki-laki</span>
+                <span className="genetic-gender-text">Laki-laki</span>
               </label>
-              <label className="gender-option">
+              <label className="genetic-gender-option">
                 <input
                   type="radio"
                   name="childGender"
@@ -79,13 +79,15 @@ export default function GeneticHeightCalculator() {
                     setGenderError("");
                   }}
                 />
-                <span className="gender-text">Perempuan</span>
+                <span className="genetic-gender-text">Perempuan</span>
               </label>
             </div>
           </div>
-          {genderError && <p className="error-text">⚠️ {genderError}</p>}
+          {genderError && (
+            <p className="genetic-error-text">⚠️ {genderError}</p>
+          )}
 
-          <div className="form-group">
+          <div className="genetic-form-group">
             <label htmlFor="father">Tinggi Ayah (cm)</label>
             <input
               id="father"
@@ -98,7 +100,7 @@ export default function GeneticHeightCalculator() {
             />
           </div>
 
-          <div className="form-group">
+          <div className="genetic-form-group">
             <label htmlFor="mother">Tinggi Ibu (cm)</label>
             <input
               id="mother"
@@ -111,11 +113,11 @@ export default function GeneticHeightCalculator() {
             />
           </div>
 
-          <div className="form-buttons">
-            <button type="submit" className="btn-calculate">
+          <div className="genetic-form-buttons">
+            <button type="submit" className="genetic-btn-calculate">
               Hitung
             </button>
-            <button type="button" onClick={reset} className="btn-reset">
+            <button type="button" onClick={reset} className="genetic-btn-reset">
               Reset
             </button>
           </div>
