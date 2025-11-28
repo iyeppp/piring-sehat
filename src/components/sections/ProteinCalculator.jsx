@@ -56,7 +56,7 @@ function ProteinCalculator() {
         </p>
 
         <form onSubmit={calculateProtein} className="protein-form">
-          <div className="form-group">
+          <div className="protein-form-group">
             <label>Berat Badan (kg)</label>
             <input
               type="number"
@@ -68,7 +68,7 @@ function ProteinCalculator() {
             />
           </div>
 
-          <div className="form-group">
+          <div className="protein-form-group">
             <label>Tingkat Aktivitas</label>
             <select
               value={activity}
@@ -82,7 +82,7 @@ function ProteinCalculator() {
             </select>
           </div>
 
-          <div className="form-group">
+          <div className="protein-form-group">
             <label>Tujuan</label>
             <select value={goal} onChange={(e) => setGoal(e.target.value)}>
               <option value="">Pilih tujuan</option>
@@ -92,13 +92,17 @@ function ProteinCalculator() {
             </select>
           </div>
 
-          {formError && <p className="error-text">⚠️ {formError}</p>}
+          {formError && <p className="protein-error-text">⚠️ {formError}</p>}
 
-          <div className="form-buttons">
-            <button type="submit" className="btn-calc">
+          <div className="protein-form-buttons">
+            <button type="submit" className="protein-btn-calc">
               Hitung Protein
             </button>
-            <button type="button" className="btn-reset" onClick={resetForm}>
+            <button
+              type="button"
+              className="protein-btn-reset"
+              onClick={resetForm}
+            >
               Reset
             </button>
           </div>

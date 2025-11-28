@@ -29,14 +29,11 @@ function BMICalculator() {
       const bmiValue = (weight / (heightInMeters * heightInMeters)).toFixed(1);
       setBmi(bmiValue);
 
-      // Calculate weight recommendation
       let recommendation = "";
       const currentWeight = parseFloat(weight);
 
-      // Determine category and recommendation
       if (bmiValue < 18.5) {
         setCategory("Kurus");
-        // Calculate weight needed to reach BMI 18.5 (lower bound of normal)
         const targetWeight = 18.5 * (heightInMeters * heightInMeters);
         const weightNeeded = (targetWeight - currentWeight).toFixed(1);
         recommendation = `Anda membutuhkan ${weightNeeded} kg lagi untuk mencapai kategori ideal (BMI 18.5).`;
@@ -45,13 +42,11 @@ function BMICalculator() {
         recommendation = "";
       } else if (bmiValue >= 25 && bmiValue < 30) {
         setCategory("Gemuk");
-        // Calculate weight needed to lose to reach BMI 24.9 (upper bound of normal)
         const targetWeight = 24.9 * (heightInMeters * heightInMeters);
         const weightToLose = (currentWeight - targetWeight).toFixed(1);
         recommendation = `Anda perlu diet ${weightToLose} kg untuk mencapai kategori ideal (BMI 24.9).`;
       } else {
         setCategory("Obesitas");
-        // Calculate weight needed to lose to reach BMI 24.9
         const targetWeight = 24.9 * (heightInMeters * heightInMeters);
         const weightToLose = (currentWeight - targetWeight).toFixed(1);
         recommendation = `Anda perlu diet ${weightToLose} kg untuk mencapai kategori ideal (BMI 24.9).`;
@@ -82,34 +77,37 @@ function BMICalculator() {
           </p>
 
           <form onSubmit={calculateBMI} className="bmi-form">
-            <div className="form-group gender-group">
-              <label className="gender-label">Jenis Kelamin</label>
-              <div className="gender-options">
-                <label className="gender-option">
+            {/* Class 'form-group' diubah jadi 'bmi-form-group' dst */}
+            <div className="bmi-form-group bmi-gender-group">
+              <label className="bmi-gender-label">Jenis Kelamin</label>
+              <div className="bmi-gender-options">
+                <label className="bmi-gender-option">
                   <input
                     type="radio"
-                    name="gender"
+                    name="bmi-gender" // name dibedakan
                     value="laki-laki"
                     checked={gender === "laki-laki"}
                     onChange={(e) => setGender(e.target.value)}
                   />
-                  <span className="gender-text">Laki-laki</span>
+                  <span className="bmi-gender-text">Laki-laki</span>
                 </label>
-                <label className="gender-option">
+                <label className="bmi-gender-option">
                   <input
                     type="radio"
-                    name="gender"
+                    name="bmi-gender"
                     value="perempuan"
                     checked={gender === "perempuan"}
                     onChange={(e) => setGender(e.target.value)}
                   />
-                  <span className="gender-text">Perempuan</span>
+                  <span className="bmi-gender-text">Perempuan</span>
                 </label>
               </div>
-              {genderError && <p className="error-text">⚠️{genderError}</p>}
+              {genderError && (
+                <p className="bmi-error-text">⚠️ {genderError}</p>
+              )}
             </div>
 
-            <div className="form-group">
+            <div className="bmi-form-group">
               <label htmlFor="weight">Berat Badan (kg)</label>
               <input
                 type="number"
@@ -123,7 +121,7 @@ function BMICalculator() {
               />
             </div>
 
-            <div className="form-group">
+            <div className="bmi-form-group">
               <label htmlFor="height">Tinggi Badan (cm)</label>
               <input
                 type="number"
@@ -137,14 +135,14 @@ function BMICalculator() {
               />
             </div>
 
-            <div className="form-buttons">
-              <button type="submit" className="btn-calculate">
+            <div className="bmi-form-buttons">
+              <button type="submit" className="bmi-btn-calculate">
                 Hitung BMI
               </button>
               <button
                 type="button"
                 onClick={resetCalculator}
-                className="btn-reset"
+                className="bmi-btn-reset"
               >
                 Reset
               </button>
@@ -159,7 +157,7 @@ function BMICalculator() {
                 {category}
               </div>
               {weightRecommendation && (
-                <div className="weight-recommendation">
+                <div className="bmi-weight-recommendation">
                   {weightRecommendation}
                 </div>
               )}
@@ -176,6 +174,8 @@ function BMICalculator() {
           )}
         </div>
       </section>
+
+      {/* Memanggil komponen lain di bawahnya */}
       <GeneticHeightCalculator />
       <ProteinCalculator />
     </>
