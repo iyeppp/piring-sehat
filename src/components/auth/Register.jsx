@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from 'firebase/auth'
-import { auth, googleProvider, githubProvider } from '../../firebase'
-import { syncFirebaseUserToSupabase } from '../../services/userService'
 import './Register.css'
+import { useAuth } from '../../hooks/useAuth'
 
-function Register({ onRegister }) {
+function Register() {
   const navigate = useNavigate()
+
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,6 +13,7 @@ function Register({ onRegister }) {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const { registerWithEmail, loginWithGoogle, loginWithGithub } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -36,19 +36,10 @@ function Register({ onRegister }) {
       setSuccess('')
       setLoading(true)
 
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-      const user = userCredential.user
-
-      await updateProfile(user, {
-        displayName: username
-      })
-
-      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+      await registerWithEmail(username, email, password)
 
       setSuccess('Akun berhasil dibuat! Mengalihkan...')
       
-      if (onRegister) onRegister(username, email, supabaseUserId)
-
       setTimeout(() => {
         navigate('/login')
       }, 1500)
@@ -78,13 +69,11 @@ function Register({ onRegister }) {
       setError('')
       setSuccess('')
       setLoading(true)
-      const result = await signInWithPopup(auth, googleProvider)
-      const user = result.user
 
-      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+      await loginWithGoogle()
 
       setSuccess('Akun berhasil dibuat! Mengalihkan...')
-      if (onRegister) onRegister(user.displayName || user.email.split('@')[0], user.email, supabaseUserId)
+      
       setTimeout(() => {
         navigate('/')
       }, 1500)
@@ -105,15 +94,11 @@ function Register({ onRegister }) {
       setError('')
       setSuccess('')
       setLoading(true)
-      const result = await signInWithPopup(auth, githubProvider)
-      const user = result.user
 
-      const supabaseUserId = await syncFirebaseUserToSupabase(user)
+      await loginWithGithub()
 
       setSuccess('Akun berhasil dibuat! Mengalihkan...')
-      const username = user.displayName || (user.email ? user.email.split('@')[0] : 
-        (user.reloadUserInfo?.screenName || (user.providerData && user.providerData[0]?.uid ? `user_${user.providerData[0].uid}` : 'pengguna')))
-      if (onRegister) onRegister(username, user.email || '', supabaseUserId)
+      
       setTimeout(() => {
         navigate('/')
       }, 1500)

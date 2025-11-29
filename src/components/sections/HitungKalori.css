@@ -54,6 +54,12 @@
   flex-direction: column;
 }
 
+.calendar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .calendar-header {
   display: flex;
   align-items: center;

@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
-import { auth, googleProvider, githubProvider } from '../../firebase'
-import { syncFirebaseUserToSupabase } from '../../services/userService'
 import './Login.css'
+import { useAuth } from '../../hooks/useAuth'
 
-function Login({ onLogin }) {
+function Login() {
   const navigate = useNavigate()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const { loginWithEmail, loginWithGoogle, loginWithGithub } = useAuth()
 
   const getUsername = (user) => {
     if (!user) return 'pengguna'
@@ -33,18 +33,8 @@ function Login({ onLogin }) {
       setError('')
       setLoading(true)
 
-      // 1. Login ke Firebase
-      const userCredential = await signInWithEmailAndPassword(auth, email, password)
-      const user = userCredential.user
+      const { user } = await loginWithEmail(email, password)
 
-      // 2. Sinkronkan user Firebase ke Supabase
-      const supabaseUserId = await syncFirebaseUserToSupabase(user)
-
-      // 3. Update state aplikasi utama
-      // user.displayName biasanya null kalau baru register tanpa updateProfile, jadi kita kasih fallback
-      onLogin(getUsername(user), user.email || '', supabaseUserId)
-      
-      // 4. Redirect ke Home
       navigate('/')
 
     } catch (err) {
@@ -77,13 +67,10 @@ function Login({ onLogin }) {
     try {
       setError('')
       setLoading(true)
-      const result = await signInWithPopup(auth, googleProvider)
-      const user = result.user
 
-      const supabaseUserId = await syncFirebaseUserToSupabase(user)
-
-      onLogin(getUsername(user), user.email || '', supabaseUserId)
+      await loginWithGoogle()
       navigate('/')
+
     } catch (err) {
       console.error(err)
       if (err.code === 'auth/popup-closed-by-user') {
@@ -100,13 +87,10 @@ function Login({ onLogin }) {
     try {
       setError('')
       setLoading(true)
-      const result = await signInWithPopup(auth, githubProvider)
-      const user = result.user
 
-      const supabaseUserId = await syncFirebaseUserToSupabase(user)
-
-      onLogin(getUsername(user), user.email || '', supabaseUserId)
+      await loginWithGithub()
       navigate('/')
+
     } catch (err) {
       console.error(err)
       if (err.code === 'auth/popup-closed-by-user') {

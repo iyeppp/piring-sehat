@@ -1,4 +1,36 @@
-import { supabase } from '../supabaseClient'
+import { auth } from '../firebase'
+
+const BASE_URL = 'http://localhost:3000'
+
+async function getAuthHeaders() {
+  const user = auth.currentUser
+  if (!user) return {}
+  const token = await user.getIdToken()
+  return { Authorization: `Bearer ${token}` }
+}
+
+async function request(path, options = {}) {
+  const authHeaders = await getAuthHeaders()
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeaders,
+      ...(options.headers || {}),
+    },
+    ...options,
+  })
+
+  const contentType = res.headers.get('content-type') || ''
+  const isJson = contentType.includes('application/json')
+  const body = isJson ? await res.json() : null
+
+  if (!res.ok) {
+    const message = body?.error || res.statusText || 'Request failed'
+    throw new Error(message)
+  }
+
+  return body
+}
 
 export async function syncFirebaseUserToSupabase(firebaseUser) {
   if (!firebaseUser) throw new Error('firebaseUser is required')
@@ -7,37 +39,30 @@ export async function syncFirebaseUserToSupabase(firebaseUser) {
   const email = firebaseUser.email
   const username = firebaseUser.displayName || (email ? email.split('@')[0] : null)
 
-  // Cek apakah user sudah ada
-  const { data: existing, error: selectError } = await supabase
-    .from('users')
-    .select('id')
-    .eq('firebase_uid', firebase_uid)
-    .maybeSingle()
+  const body = await request('/api/auth/sync-user', {
+    method: 'POST',
+    body: JSON.stringify({ firebase_uid, email, username }),
+  })
 
-  if (selectError) {
-    console.error('Gagal cek user di Supabase:', selectError)
-    throw selectError
-  }
+  return body.id
+}
 
-  if (existing) {
-    return existing.id
-  }
+// Ambil target kalori harian user (dalam kkal)
+export async function getUserDailyCalorieTarget(userId) {
+  if (!userId) throw new Error('userId is required')
 
-  // Jika belum ada, insert baru
-  const { data, error: insertError } = await supabase
-    .from('users')
-    .insert({
-      firebase_uid,
-      email,
-      username,
-    })
-    .select('id')
-    .single()
+  const body = await request(`/api/users/${encodeURIComponent(userId)}/daily-target`)
+  return body.target ?? null
+}
 
-  if (insertError) {
-    console.error('Gagal insert user ke Supabase:', insertError)
-    throw insertError
-  }
+// Update target kalori harian user (dalam kkal)
+export async function updateUserDailyCalorieTarget(userId, target) {
+  if (!userId) throw new Error('userId is required')
 
-  return data.id
+  const body = await request(`/api/users/${encodeURIComponent(userId)}/daily-target`, {
+    method: 'PUT',
+    body: JSON.stringify({ target }),
+  })
+
+  return body.target
 }
