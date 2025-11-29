@@ -9,9 +9,14 @@ import authRouter from './routes/auth.js';
 const app = express();
 const port = 3000;
 
-// Izinkan akses dari frontend Vite (localhost:5173)
+// Izinkan akses dari frontend lokal dan deployment Vercel
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://piring-sehat.vercel.app',
+]
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: allowedOrigins,
 }));
 
 app.use(express.json());
