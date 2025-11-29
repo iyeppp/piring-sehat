@@ -54,14 +54,18 @@ export function useFoodAutocomplete({ supabaseUserId }) {
   }
 
   const handleAutoFillCalories = async () => {
-    if (!foodName) return
+    const trimmedFoodName = foodName.trim()
+    if (!trimmedFoodName) {
+      setAutoFillError('Silakan masukkan nama makanan terlebih dahulu.')
+      return
+    }
     if (!supabaseUserId) return
 
     try {
       setAutoFillError('')
       setAutoFillLoading(true)
 
-      const food = await getFirstFoodByName(foodName)
+      const food = await getFirstFoodByName(trimmedFoodName)
 
       if (!food) {
         setAutoFillError('Makanan tidak ditemukan di database.')

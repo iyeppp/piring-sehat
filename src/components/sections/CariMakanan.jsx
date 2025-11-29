@@ -1,13 +1,79 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './CariMakanan.css'
 import bgCari from "../../assets/bg-carimakanan.png";
+import { searchFoodsByName } from '../../services/makananService'
+
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 function CariMakanan() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [allFoods, setAllFoods] = useState([])
+  const [groupedFoods, setGroupedFoods] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [selectedLetter, setSelectedLetter] = useState('A')
 
-  const handleSearch = (e) => {
+  // Load all foods on component mount
+  useEffect(() => {
+    loadAllFoods()
+  }, [])
+
+  const loadAllFoods = async () => {
+    try {
+      setIsLoading(true)
+      setError('')
+      // Ambil semua makanan dari database
+      const results = await searchFoodsByName('', 1000)
+      setAllFoods(results)
+      groupFoodsByLetter(results)
+    } catch (err) {
+      console.error('Gagal memuat makanan:', err)
+      setError('Gagal memuat data makanan: ' + err.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const groupFoodsByLetter = (foods) => {
+    const grouped = {}
+    
+    foods.forEach((food) => {
+      const firstLetter = (food.name || '').charAt(0).toUpperCase()
+      if (!grouped[firstLetter]) {
+        grouped[firstLetter] = []
+      }
+      grouped[firstLetter].push(food)
+    })
+
+    setGroupedFoods(grouped)
+    // Set selected letter ke huruf pertama yang ada
+    const firstAvailableLetter = Object.keys(grouped).sort()[0]
+    if (firstAvailableLetter) {
+      setSelectedLetter(firstAvailableLetter)
+    }
+  }
+
+  const handleSearch = async (e) => {
     e.preventDefault()
-    // Search functionality will be implemented when database is ready
+    if (!searchTerm.trim()) {
+      loadAllFoods()
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      setError('')
+      const results = await searchFoodsByName(searchTerm, 100)
+      setAllFoods(results)
+      groupFoodsByLetter(results)
+    } catch (err) {
+      console.error('Gagal mencari makanan:', err)
+      setError('Gagal mencari makanan. Silakan coba lagi.')
+      setAllFoods([])
+      setGroupedFoods({})
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -27,8 +93,8 @@ function CariMakanan() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Cari Makanan"
                 className="search-input"
-                />
-              <button type="submit" className="search-button">
+              />
+              <button type="submit" className="search-button" disabled={isLoading}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"></circle>
                   <path d="m21 21-4.35-4.35"></path>
@@ -37,20 +103,51 @@ function CariMakanan() {
             </div>
           </form>
 
-          <div className='cari-jenis'>
-            <h1 className='cari-judul-jenis'>Rekomendasi Makanan Sehat Menurut Kami 😋</h1>
-            <div className='kotak-kecil2'>
-              <div className='kotak-kotak'>
-              <p>Jenis Makanan1</p>
-            </div>
-            <div className='kotak-kotak'>
-              <p>Jenis Makanan2</p>
-            </div>
-            <div className='kotak-kotak'>
-              <p>Jenis Makanan3</p>
-            </div>
-            </div>
+          {error && <div className="error-message">{error}</div>}
+
+          {/* Letter Navigation */}
+          <div className="letter-navigation">
+            {LETTERS.map((letter) => (
+              <button
+                key={letter}
+                className={`letter-btn ${selectedLetter === letter ? 'active' : ''}`}
+                onClick={() => setSelectedLetter(letter)}
+              >
+                {letter}
+              </button>
+            ))}
           </div>
+
+          {/* Foods List with Scroll */}
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>Memuat data makanan...</div>
+          ) : (
+            <div className="foods-container">
+              <h3 className="foods-letter-title">{selectedLetter}</h3>
+              <div className="foods-list">
+                {groupedFoods[selectedLetter] && groupedFoods[selectedLetter].length > 0 ? (
+                  groupedFoods[selectedLetter].map((food) => (
+                    <div key={food.id} className="food-item">
+                      {(food.image_url || food.image) && (
+                        <img src={food.image_url || food.image} alt={food.name} className="food-item-image" />
+                      )}
+                      <div className="food-item-content">
+                        <h4>{food.name}</h4>
+                        <div className="food-item-info">
+                          {food.calories && <span className="info-badge">Kalori: {food.calories} kkal</span>}
+                          {(food.proteins || food.protein) && <span className="info-badge">Protein: {food.proteins || food.protein}g</span>}
+                          {(food.carbohydrate || food.carbs) && <span className="info-badge">Karbo: {food.carbohydrate || food.carbs}g</span>}
+                          {food.fat && <span className="info-badge">Lemak: {food.fat}g</span>}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ textAlign: 'center', padding: '20px' }}>Tidak ada data untuk huruf {selectedLetter}</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>

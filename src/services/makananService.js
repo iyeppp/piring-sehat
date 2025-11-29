@@ -29,9 +29,15 @@ async function request(path) {
 }
 
 // Cari makanan berdasarkan nama (menggunakan ILIKE, tidak case-sensitive)
+// Jika query kosong, akan mengembalikan semua makanan (untuk rekomendasi)
 export async function searchFoodsByName(query, limit = 5) {
   const normalized = (query || '').trim()
-  if (!normalized) return []
+  
+  // Jika query kosong, ambil semua makanan
+  if (!normalized) {
+    const body = await request(`/api/foods/search?limit=${encodeURIComponent(limit)}`)
+    return body.data || []
+  }
 
   const firstWord = normalized.split(/\s+/)[0]
 
