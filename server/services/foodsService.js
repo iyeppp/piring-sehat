@@ -22,3 +22,14 @@ export async function getFirstFoodByName(query) {
   const results = await searchFoodsByName(query, 1)
   return results[0] || null
 }
+
+// Ambil semua makanan (untuk rekomendasi)
+export async function getAllFoods(limit = 10) {
+  const { data, error } = await supabase
+    .from('makanan')
+    .select('*')
+    .limit(limit)
+
+  if (error) throw error
+  return data || []
+}
