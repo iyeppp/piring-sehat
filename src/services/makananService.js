@@ -16,6 +16,7 @@ async function request(path) {
       ...authHeaders,
     },
   })
+
   const contentType = res.headers.get('content-type') || ''
   const isJson = contentType.includes('application/json')
   const body = isJson ? await res.json() : null
@@ -28,24 +29,21 @@ async function request(path) {
   return body
 }
 
-// Cari makanan berdasarkan nama (menggunakan ILIKE, tidak case-sensitive)
-// Jika query kosong, akan mengembalikan semua makanan (untuk rekomendasi)
-export async function searchFoodsByName(query, limit = 5) {
+export async function searchFoodsByName(query, limit = 300) {
   const normalized = (query || '').trim()
-  
-  // Jika query kosong, ambil semua makanan
+
   if (!normalized) {
     const body = await request(`/api/foods/search?limit=${encodeURIComponent(limit)}`)
     return body.data || []
   }
 
-  const firstWord = normalized.split(/\s+/)[0]
+  const body = await request(
+    `/api/foods/search?query=${encodeURIComponent(normalized)}&limit=${encodeURIComponent(limit)}`
+  )
 
-  const body = await request(`/api/foods/search?query=${encodeURIComponent(firstWord)}&limit=${encodeURIComponent(limit)}`)
   return body.data || []
 }
 
-// Ambil satu makanan dengan nama paling cocok (first match)
 export async function getFirstFoodByName(query) {
   const normalized = (query || '').trim()
   if (!normalized) return null
