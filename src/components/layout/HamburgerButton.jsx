@@ -1,23 +1,17 @@
-import './HamburgerButton.css'
+import './HamburgerButton.css';
 
 function HamburgerButton({ isOpen, onClick }) {
   return (
     <button 
-      className={`hamburger ${isOpen ? 'active' : ''}`}
+      className={`hamburger-btn ${isOpen ? 'open' : ''}`} 
       onClick={onClick}
       aria-label="Toggle menu"
     >
-      {isOpen ? (
-        <span className="hamburger-x">&#x2716;</span>
-      ) : (
-        <>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-        </>
-      )}
+      <span className="hamburger-line"></span>
+      <span className="hamburger-line"></span>
+      <span className="hamburger-line"></span>
     </button>
-  )
+  );
 }
 
-export default HamburgerButton
+export default HamburgerButton;
