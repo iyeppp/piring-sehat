@@ -35,22 +35,25 @@ function NavMenu({
         ))}
       </ul>
 
-      {/* User Info Mobile - hanya muncul jika sudah login */}
-      {isAuthenticated && userEmail ? (
-        <UserInfo userEmail={userEmail} onLogout={onLogout} isMobile={true} />
-      ) : (
-        <div className="login-btn-mobile">
-          <button
-            onClick={() => {
-              onClose();
-              onOpenLogin();
-            }}
-            className="navbar-login-btn"
-          >
-            Masuk
-          </button>
-        </div>
-      )}
+      <div className="mobile-auth-section">
+        {isAuthenticated && userEmail ? (
+          <div className="mobile-user-info-wrapper">
+             <UserInfo userEmail={userEmail} onLogout={onLogout} isMobile={true} />
+          </div>
+        ) : (
+          <div className="login-btn-mobile">
+            <button
+              onClick={() => {
+                onClose();
+                onOpenLogin();
+              }}
+              className="navbar-login-btn"
+            >
+              Masuk
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
