@@ -7,13 +7,22 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 function CariMakanan() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('') // 🆕 DEBOUNCE STATE
   const [allFoods, setAllFoods] = useState([])
   const [groupedFoods, setGroupedFoods] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [selectedLetter, setSelectedLetter] = useState('A')
 
-  // Load all foods on component mount
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 300)
+
+    return () => clearTimeout(timeout)
+  }, [searchTerm])
+
   useEffect(() => {
     loadAllFoods()
   }, [])
@@ -22,7 +31,6 @@ function CariMakanan() {
     try {
       setIsLoading(true)
       setError('')
-      // Ambil semua makanan dari database
       const results = await searchFoodsByName('', 1000)
       setAllFoods(results)
       groupFoodsByLetter(results)
@@ -46,34 +54,38 @@ function CariMakanan() {
     })
 
     setGroupedFoods(grouped)
-    // Set selected letter ke huruf pertama yang ada
     const firstAvailableLetter = Object.keys(grouped).sort()[0]
     if (firstAvailableLetter) {
       setSelectedLetter(firstAvailableLetter)
     }
   }
 
-  const handleSearch = async (e) => {
-    e.preventDefault()
-    if (!searchTerm.trim()) {
-      loadAllFoods()
-      return
-    }
-
+  const fetchDebouncedFoods = async () => {
     try {
       setIsLoading(true)
       setError('')
-      const results = await searchFoodsByName(searchTerm, 100)
+
+      const results = await searchFoodsByName(debouncedSearchTerm, 100)
       setAllFoods(results)
       groupFoodsByLetter(results)
     } catch (err) {
       console.error('Gagal mencari makanan:', err)
       setError('Gagal mencari makanan. Silakan coba lagi.')
-      setAllFoods([])
-      setGroupedFoods({})
     } finally {
       setIsLoading(false)
     }
+  }
+
+  useEffect(() => {
+    if (debouncedSearchTerm.trim() === '') {
+      loadAllFoods()
+    } else {
+      fetchDebouncedFoods()
+    }
+  }, [debouncedSearchTerm])
+
+  const handleSearch = (e) => {
+    e.preventDefault()
   }
 
   return (
@@ -118,7 +130,6 @@ function CariMakanan() {
             ))}
           </div>
 
-          {/* Foods List with Scroll */}
           {isLoading ? (
             <div style={{ textAlign: 'center', padding: '40px' }}>Memuat data makanan...</div>
           ) : (
