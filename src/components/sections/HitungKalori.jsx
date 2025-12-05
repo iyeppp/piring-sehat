@@ -2,6 +2,14 @@ import { useOutletContext } from 'react-router-dom'
 import { useHitungKalori } from '../../hooks/useHitungKalori.js'
 import './HitungKalori.css'
 
+/**
+ * Halaman utama untuk fitur pencatatan dan perhitungan kalori.
+ * Menggabungkan calendar, input makanan, dan ringkasan nutrisi/target.
+ *
+ * Komponen ini menggunakan `useHitungKalori` untuk mendapatkan semua state dan handler
+ * yang diperlukan (calendar, autocomplete, logs, nutrition). Jika pengguna belum login,
+ * ia akan menampilkan state terkunci dengan tombol untuk membuka dialog login.
+ */
 function HitungKalori() {
   const { userEmail, supabaseUserId, onOpenLogin, isAuthenticated } = useOutletContext()
   const {

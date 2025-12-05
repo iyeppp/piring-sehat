@@ -1,6 +1,10 @@
 import './WelcomeSection.css'
 import logo from '../../assets/new-logo.png'
 
+/**
+ * Komponen halaman welcome / hero di halaman depan.
+ * Menampilkan judul, deskripsi singkat, dan logo aplikasi.
+ */
 function WelcomeSection() {
   return (
     <section id="home" className="welcome">

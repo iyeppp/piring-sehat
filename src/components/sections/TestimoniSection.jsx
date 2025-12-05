@@ -1,5 +1,9 @@
 import './TestimoniSection.css'
 
+/**
+ * Komponen bagian testimoni pengguna.
+ * Menampilkan daftar testimoni statis sebagai ilustrasi pengalaman pengguna.
+ */
 function TestimoniSection() {
   const testimonials = [
     {

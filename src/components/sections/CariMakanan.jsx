@@ -5,6 +5,15 @@ import { searchFoodsByName } from '../../services/makananService'
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+
+/**
+ * Halaman pencarian makanan.
+ * Menyediakan pencarian dengan debounce, navigasi huruf, dan pengelompokan hasil berdasarkan huruf pertama.
+ *
+ * - `searchTerm` dipakai untuk input pengguna, dan `debouncedSearchTerm` untuk menunda pemanggilan API.
+ * - Saat tidak ada query, komponen memuat daftar makanan lengkap (limit tertentu) lalu mengelompokkannya.
+ */
 function CariMakanan() {
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('') // 🆕 DEBOUNCE STATE
@@ -89,7 +98,7 @@ function CariMakanan() {
   }
 
   return (
-    <div className="cari-background" style={{backgroundImage: `url(${bgCari})`}}>
+    <div className="cari-background">
       <section id="cari" className="cari-section">
         <div className="cari-container">
           <h2 className="cari-title">Cari Makanan</h2>

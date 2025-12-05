@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import "./GeneticHeightCalculator.css";
 
+/**
+ * Komponen Kalkulator Tinggi Potensi Genetik.
+ * Mengestimasi tinggi dewasa anak berdasarkan tinggi ayah dan ibu serta jenis kelamin anak.
+ *
+ * Menggunakan rumus sederhana: (tinggi_ayah + tinggi_ibu ± 13) / 2,
+ * di mana tanda + dipakai untuk anak laki-laki dan - untuk anak perempuan.
+ */
 export default function GeneticHeightCalculator() {
   const [father, setFather] = useState("");
   const [mother, setMother] = useState("");
@@ -8,6 +15,10 @@ export default function GeneticHeightCalculator() {
   const [result, setResult] = useState(null);
   const [genderError, setGenderError] = useState("");
 
+  /**
+   * Hitung estimasi tinggi dewasa berdasarkan input orang tua dan jenis kelamin.
+   * @param {Event} e Event form submit (opsional).
+   */
   const calculate = (e) => {
     e && e.preventDefault();
     if (!gender) {
@@ -34,6 +45,9 @@ export default function GeneticHeightCalculator() {
     setResult(`Perkiraan tinggi dewasa: ${height.toFixed(1)} cm`);
   };
 
+  /**
+   * Reset input dan hasil kalkulasi.
+   */
   const reset = () => {
     setFather("");
     setMother("");

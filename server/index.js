@@ -6,18 +6,20 @@ import foodsRouter from './routes/foods.js';
 import usersRouter from './routes/users.js';
 import authRouter from './routes/auth.js';
 
+/**
+ * Entrypoint utama server Express untuk backend Piring Sehat.
+ *
+ * Tanggung jawab file ini:
+ * - Menginisialisasi instance Express dan middleware global (CORS, JSON parsing, logging sederhana).
+ * - Mendaftarkan semua router utama di bawah prefix `/api`.
+ * - Menerapkan proteksi autentikasi Firebase pada route tertentu.
+ * - Menyediakan handler 404 khusus untuk endpoint `/api/*` dan error handler global.
+ */
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Izinkan akses dari frontend lokal dan deployment Vercel
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://piring-sehat.vercel.app',
-]
-
-app.use(cors({
-  origin: allowedOrigins,
-}));
+// Sementara: izinkan semua origin untuk memastikan masalah bukan dari CORS
+app.use(cors());
 
 app.use(express.json());
 

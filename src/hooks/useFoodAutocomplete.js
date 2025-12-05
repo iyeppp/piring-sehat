@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react'
 import { getFirstFoodByName, searchFoodsByName } from '../services/makananService'
 
+/**
+ * Hook untuk fitur autocomplete nama makanan dan pengisian otomatis kalori.
+ *
+ * @param {{supabaseUserId?: string|null}} params Parameter yang berisi `supabaseUserId`.
+ * @returns {object} State dan handler untuk form makanan (nama, kalori, saran, dll).
+ *
+ * Hook ini mengelola input nama makanan, menampilkan saran berdasarkan query,
+ * dan menyediakan fungsi untuk mengisi otomatis nilai kalori dari database.
+ */
 export function useFoodAutocomplete({ supabaseUserId }) {
   const [foodName, setFoodName] = useState('')
   const [calories, setCalories] = useState('')
@@ -43,6 +52,11 @@ export function useFoodAutocomplete({ supabaseUserId }) {
     }
   }, [foodName])
 
+  /**
+   * Handler ketika pengguna memilih salah satu saran makanan.
+   * Mengisi `foodName`, `calories`, dan `autoFood` berdasarkan pilihan.
+   * @param {object} food Objek makanan yang dipilih (dari service).
+   */
   const handleSelectSuggestion = (food) => {
     setFoodName(food.name || '')
     if (food.calories != null) {
@@ -53,6 +67,10 @@ export function useFoodAutocomplete({ supabaseUserId }) {
     setFoodSuggestions([])
   }
 
+  /**
+   * Mengisi otomatis nilai kalori berdasarkan `foodName` saat ini.
+   * Memanggil service `getFirstFoodByName` lalu memperbarui state.
+   */
   const handleAutoFillCalories = async () => {
     const trimmedFoodName = foodName.trim()
     if (!trimmedFoodName) {

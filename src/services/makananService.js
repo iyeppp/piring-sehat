@@ -2,6 +2,11 @@ import { auth } from '../firebase'
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
 
+/**
+ * Ambil header Authorization dari Firebase currentUser (Bearer token).
+ * Jika tidak ada user yang login, mengembalikan objek kosong.
+ * @returns {Promise<Object>} Header Authorization atau objek kosong.
+ */
 async function getAuthHeaders() {
   const user = auth.currentUser
   if (!user) return {}
@@ -9,6 +14,12 @@ async function getAuthHeaders() {
   return { Authorization: `Bearer ${token}` }
 }
 
+/**
+ * Helper sederhana untuk melakukan GET request ke endpoint makanan.
+ * Melakukan parsing JSON dan melempar Error jika response tidak OK.
+ * @param {string} path Path endpoint (mis. '/api/foods/search').
+ * @returns {Promise<any>} Body response yang ter-parse.
+ */
 async function request(path) {
   const authHeaders = await getAuthHeaders()
   const res = await fetch(`${BASE_URL}${path}`, {

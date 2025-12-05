@@ -1,26 +1,34 @@
+/**
+ * Navbar Component
+ *
+ * Komponen navigasi utama aplikasi. Menampilkan logo, tombol login,
+ * menu navigasi, serta informasi pengguna ketika sudah login.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string|null} props.userEmail - Email user yang sedang login
+ * @param {function} props.onLogout - Fungsi untuk logout user
+ * @param {function} props.onOpenLogin - Membuka modal/login page
+ * @param {boolean} props.isAuthenticated - Status autentikasi user
+ * @returns {JSX.Element}
+ */
+
 import { useState } from 'react'
 import './Navbar.css'
 import HamburgerButton from './HamburgerButton'
 import NavMenu from './NavMenu'
 import UserInfo from './UserInfo'
-import logo from '../../assets/new-logo.png' 
+import logo from '../../assets/new-logo.png'
 
 function Navbar({ userEmail, onLogout, onOpenLogin, isAuthenticated }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
-
-  const closeMenu = () => {
-    setIsMenuOpen(false)
-  }
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+  const closeMenu = () => setIsMenuOpen(false)
 
   return (
     <>
-      {isMenuOpen && (
-        <div className="menu-overlay" onClick={closeMenu}></div>
-      )}
+      {isMenuOpen && <div className="menu-overlay" onClick={closeMenu}></div>}
 
       <nav className="navbar">
         <div className="navbar-container">
