@@ -63,3 +63,4 @@ export async function getAllFoods(limit = 10) {
   if (error) throw error
   return data || []
 }
+}

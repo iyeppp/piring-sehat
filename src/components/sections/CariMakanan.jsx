@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import './CariMakanan.css'
+import bgCari from "../../assets/bg-carimakanan.png";
 import { searchFoodsByName } from '../../services/makananService'
+
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
@@ -33,9 +36,6 @@ function CariMakanan() {
     loadAllFoods()
   }, [])
 
-  /**
-   * Muat semua makanan (dipakai saat tidak ada query atau saat inisialisasi).
-   */
   const loadAllFoods = async () => {
     try {
       setIsLoading(true)
@@ -51,10 +51,6 @@ function CariMakanan() {
     }
   }
 
-  /**
-   * Mengelompokkan array makanan berdasarkan huruf pertama nama.
-   * @param {Array} foods Array objek makanan.
-   */
   const groupFoodsByLetter = (foods) => {
     const grouped = {}
     
@@ -73,9 +69,6 @@ function CariMakanan() {
     }
   }
 
-  /**
-   * Memanggil API pencarian dengan query debounced.
-   */
   const fetchDebouncedFoods = async () => {
     try {
       setIsLoading(true)

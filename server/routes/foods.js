@@ -107,3 +107,4 @@ router.get('/all', async (req, res) => {
 })
 
 export default router
+export default router

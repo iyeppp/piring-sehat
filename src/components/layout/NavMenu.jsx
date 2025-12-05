@@ -55,14 +55,14 @@ function NavMenu({
       <div className="mobile-auth-section">
         {isAuthenticated && userEmail ? (
           <div className="mobile-user-info-wrapper">
-            <UserInfo userEmail={userEmail} onLogout={onLogout} isMobile />
+             <UserInfo userEmail={userEmail} onLogout={onLogout} isMobile={true} />
           </div>
         ) : (
           <div className="login-btn-mobile">
             <button
               onClick={() => {
-                onClose()
-                onOpenLogin()
+                onClose();
+                onOpenLogin();
               }}
               className="navbar-login-btn"
             >
