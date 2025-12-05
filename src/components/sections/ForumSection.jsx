@@ -165,13 +165,14 @@ function ForumSection() {
     if (!showDeleteConfirm) return
 
     const preventScroll = (e) => e.preventDefault()
-    document.addEventListener('wheel', preventScroll, { passive: false })
-    document.addEventListener('touchmove', preventScroll, { passive: false })
-    document.addEventListener('keydown', (e) => {
+    const handleKeyDown = (e) => {
       if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', ' '].includes(e.key)) {
         e.preventDefault()
       }
-    })
+    }
+    document.addEventListener('wheel', preventScroll, { passive: false })
+    document.addEventListener('touchmove', preventScroll, { passive: false })
+    document.addEventListener('keydown', handleKeyDown)
 
     const preventOutsideClick = (e) => {
       const modal = document.querySelector('.forum-delete-modal')
@@ -186,6 +187,7 @@ function ForumSection() {
     return () => {
       document.removeEventListener('wheel', preventScroll)
       document.removeEventListener('touchmove', preventScroll)
+      document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('click', preventOutsideClick, true)
     }
   }, [showDeleteConfirm])
