@@ -3,6 +3,8 @@ import './CariMakanan.css'
 import bgCari from "../../assets/new-logo.png";
 import { searchFoodsByName } from '../../services/makananService'
 
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+
 /**
  * Halaman pencarian makanan.
  * Menyediakan pencarian dengan debounce, navigasi huruf, dan pengelompokan hasil berdasarkan huruf pertama.
