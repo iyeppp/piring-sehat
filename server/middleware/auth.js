@@ -1,4 +1,5 @@
 import { adminAuth } from '../firebaseAdmin.js'
+import { supabase } from '../supabaseClient.js'
 
 /**
  * Middleware Express untuk memverifikasi Firebase ID token pada header Authorization.
@@ -6,7 +7,7 @@ import { adminAuth } from '../firebaseAdmin.js'
  * - Mengambil token dari header `Authorization: Bearer <token>`.
  * - Jika token tidak ada, mengembalikan HTTP 401 dengan pesan `Unauthorized: missing token`.
  * - Jika token ada, memverifikasi menggunakan Firebase Admin.
- * - Jika verifikasi berhasil, payload token disimpan di `req.firebaseUser` dan request diteruskan ke handler berikutnya.
+ * - Jika verifikasi berhasil, mengambil supabaseUserId dari database dan menyimpannya di `req.user`.
  * - Jika verifikasi gagal, mengembalikan HTTP 401 dengan pesan `Unauthorized: invalid token`.
  *
  * @async
@@ -27,6 +28,25 @@ export async function requireAuth(req, res, next) {
   try {
     const decoded = await adminAuth.verifyIdToken(token)
     req.firebaseUser = decoded
+
+    // Ambil supabaseUserId dari database berdasarkan firebase_uid
+    const { data, error } = await supabase
+      .from('users')
+      .select('id')
+      .eq('firebase_uid', decoded.uid)
+      .single()
+
+    if (error || !data) {
+      console.error('Error getting user from Supabase:', error)
+      return res.status(401).json({ error: 'User tidak ditemukan di database' })
+    }
+
+    // Set req.user dengan supabaseUserId
+    req.user = {
+      firebaseUid: decoded.uid,
+      supabaseUserId: data.id,
+    }
+
     next()
   } catch (error) {
     console.error('Error verifyIdToken:', error)
