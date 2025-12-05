@@ -18,8 +18,25 @@ import authRouter from './routes/auth.js';
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Sementara: izinkan semua origin untuk memastikan masalah bukan dari CORS
-app.use(cors());
+// Konfigurasi CORS: izinkan hanya origin tertentu (dev + produksi)
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://piring-sehat.vercel.app',
+];
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Request tanpa origin (misal dari server ke server) diizinkan
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 

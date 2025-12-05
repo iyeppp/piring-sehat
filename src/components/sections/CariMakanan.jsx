@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react'
 import './CariMakanan.css'
-import bgCari from "../../assets/bg-carimakanan.png";
+import bgCari from "../../assets/new-logo.png";
 import { searchFoodsByName } from '../../services/makananService'
-
-const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-
-const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 /**
  * Halaman pencarian makanan.
@@ -16,7 +12,7 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
  */
 function CariMakanan() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('') // 🆕 DEBOUNCE STATE
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('') // DEBOUNCE STATE
   const [allFoods, setAllFoods] = useState([])
   const [groupedFoods, setGroupedFoods] = useState({})
   const [isLoading, setIsLoading] = useState(false)
