@@ -6,6 +6,7 @@ import foodsRouter from './routes/foods.js'
 import usersRouter from './routes/users.js'
 import authRouter from './routes/auth.js'
 import { testimonialsRouter } from './routes/testimonials.js'
+import forumsRouter from './routes/forums.js'
 
 /**
  * Entrypoint utama server Express untuk backend Piring Sehat.
@@ -58,6 +59,7 @@ app.get('/api/test', (req, res) => res.json({ message: 'Server berjalan dengan b
 // Protected routes dengan Firebase Auth
 app.use('/api/food-logs', requireAuth, foodLogsRouter)
 app.use('/api/users', requireAuth, usersRouter)
+app.use('/api/forums', requireAuth, forumsRouter)
 
 // Testimonials: GET tanpa auth, POST dengan auth
 app.use('/api/testimonials', (req, res, next) => {
