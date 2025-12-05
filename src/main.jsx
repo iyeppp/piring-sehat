@@ -10,6 +10,8 @@ import WelcomeSection from './components/sections/WelcomeSection'
 import TentangKami from './components/sections/TentangKami'
 import TestimoniSection from './components/sections/TestimoniSection'
 import AddTestimoni from './components/sections/AddTestimoni'
+import ForumSection from './components/sections/ForumSection'
+import ForumDetailSection from './components/sections/ForumDetailSection'
 import BMICalculator from './components/sections/BMICalculator'
 import GeneticHeightCalculator from './components/sections/GeneticHeightCalculator'
 import ProteinCalculator from './components/sections/ProteinCalculator'
@@ -26,7 +28,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth'
  * kemudian mendaftarkan semua routes publik dan protected routes.
  */
 function MainApp() {
-  const { username, userEmail, supabaseUserId, isAuthenticated, logout } = useAuth()
+  const { username, userEmail, supabaseUserId, userRole, isAuthenticated, logout } = useAuth()
 
   return (
     <Router>
@@ -43,6 +45,7 @@ function MainApp() {
               userEmail={isAuthenticated ? username : ""}
               username={username}
               supabaseUserId={supabaseUserId}
+              userRole={userRole}
               onLogout={logout}
               isAuthenticated={isAuthenticated}
             />
@@ -62,6 +65,8 @@ function MainApp() {
           <Route path="cari-makanan" element={<CariMakanan />} />
           <Route path="hitung-kalori" element={<HitungKalori />} />
           <Route path="testimoni" element={<AddTestimoni />} />
+          <Route path="forum" element={<ForumSection />} />
+          <Route path="forum/:id" element={<ForumDetailSection />} />
         </Route>
 
         {/* Fallback route */}

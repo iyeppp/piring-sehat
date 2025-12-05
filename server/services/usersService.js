@@ -102,3 +102,23 @@ export async function updateUserDailyCalorieTarget(userId, target) {
   if (error) throw error
   return value
 }
+
+/**
+ * Mengambil profil pengguna berdasarkan ID.
+ *
+ * @async
+ * @function getUserProfileById
+ * @param {number|string} userId - ID user di tabel `users`.
+ * @returns {Promise<Object|null>} Promise yang berisi profil pengguna atau `null` jika tidak ditemukan.
+ * @throws {Error} Melempar error dari Supabase jika query gagal.
+ */
+export async function getUserProfileById(userId) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, username, role')
+    .eq('id', userId)
+    .maybeSingle()
+
+  if (error) throw error
+  return data
+}

@@ -32,6 +32,7 @@ function NavMenu({
     { to: "/Kalkulator", label: "Kalkulator" },
     { to: "/cari-makanan", label: "Cari Makanan" },
     { to: "/hitung-kalori", label: "Hitung Kalori" },
+    { to: "/forum", label: "Forum" },
   ];
 
   return (

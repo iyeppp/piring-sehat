@@ -29,10 +29,10 @@ export async function requireAuth(req, res, next) {
     const decoded = await adminAuth.verifyIdToken(token)
     req.firebaseUser = decoded
 
-    // Ambil supabaseUserId dari database berdasarkan firebase_uid
+    // Ambil supabaseUserId dan role dari database berdasarkan firebase_uid
     const { data, error } = await supabase
       .from('users')
-      .select('id')
+      .select('id, role')
       .eq('firebase_uid', decoded.uid)
       .single()
 
@@ -41,10 +41,11 @@ export async function requireAuth(req, res, next) {
       return res.status(401).json({ error: 'User tidak ditemukan di database' })
     }
 
-    // Set req.user dengan supabaseUserId
+    // Set req.user dengan supabaseUserId dan role
     req.user = {
       firebaseUid: decoded.uid,
       supabaseUserId: data.id,
+      role: data.role,
     }
 
     next()

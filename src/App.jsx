@@ -19,7 +19,7 @@ import Footer from './components/layout/Footer'
  * Komponen root yang menyediakan layout untuk seluruh aplikasi.
  * Meneruskan context ke child routes melalui Outlet.
  */
-function App({ userEmail, username, supabaseUserId, onLogout, isAuthenticated }) {
+function App({ userEmail, username, supabaseUserId, userRole, onLogout, isAuthenticated }) {
   const navigate = useNavigate()
 
   const handleLogout = () => onLogout()
@@ -39,6 +39,7 @@ function App({ userEmail, username, supabaseUserId, onLogout, isAuthenticated })
           userEmail,
           username,
           supabaseUserId,
+          userRole,
           onOpenLogin: handleOpenLogin,
           isAuthenticated,
         }} />
