@@ -21,6 +21,12 @@ import CariMakanan from "./components/sections/CariMakanan";
 import HitungKalori from "./components/sections/HitungKalori";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 
+/**
+ * Root aplikasi: mendefinisikan routing dan membungkus aplikasi dengan `AuthProvider`.
+ *
+ * `MainApp` menggunakan `useAuth` untuk mendapatkan informasi user yang dibutuhkan
+ * lalu mendaftarkan route publik dan route utama yang memakai `App` sebagai layout.
+ */
 function MainApp() {
   const { username, userEmail, supabaseUserId, isAuthenticated, logout } = useAuth();
 

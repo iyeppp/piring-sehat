@@ -16,6 +16,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Export auth
+/**
+ * Firebase Auth instance yang digunakan di aplikasi.
+ *
+ * Instance ini dipakai untuk operasi autentikasi (login, logout, token) di seluruh aplikasi.
+ */
 export const auth = getAuth(app);
 
 // Ensure auth persists across tabs and refresh
@@ -24,9 +29,15 @@ setPersistence(auth, browserLocalPersistence).catch(() => {
 });
 
 // Export Firestore
+/**
+ * Firebase Firestore instance (tidak selalu dipakai oleh semua fitur, tapi diekspor untuk kemudahan).
+ */
 export const db = getFirestore(app);
 
 // Configure Auth Providers
+/**
+ * Provider OAuth untuk Google dan GitHub (digunakan pada login via popup).
+ */
 export const googleProvider = new GoogleAuthProvider();
 export const githubProvider = new GithubAuthProvider();
 
@@ -35,4 +46,4 @@ googleProvider.addScope('profile')
 googleProvider.addScope('email')
 
 // Set scopes untuk GitHub
-githubProvider.addScope('user:email')   
+githubProvider.addScope('user:email')

@@ -2,6 +2,17 @@ import { useState, useEffect } from 'react'
 import { getDailyNutritionSummary } from '../services/foodLogService'
 import { getUserDailyCalorieTarget, updateUserDailyCalorieTarget } from '../services/userService'
 
+/**
+ * Hook untuk mendapatkan ringkasan nutrisi harian dan mengelola target kalori pengguna.
+ *
+ * @param {object} params Parameter input.
+ * @param {string|null|undefined} params.supabaseUserId ID pengguna Supabase.
+ * @param {Date} params.selectedDate Tanggal yang dipilih untuk melihat ringkasan nutrisi.
+ * @returns {object} State dan handler terkait nutrisi harian dan target kalori.
+ *
+ * Hook ini mengambil ringkasan protein/karbo/fat untuk tanggal tertentu dan
+ * memuat serta menyimpan target kalori harian pengguna.
+ */
 export function useNutritionAndTarget({ supabaseUserId, selectedDate }) {
   const [dailyNutrition, setDailyNutrition] = useState({ protein: 0, carbs: 0, fat: 0 })
   const [dailyTarget, setDailyTarget] = useState(null)
@@ -42,6 +53,11 @@ export function useNutritionAndTarget({ supabaseUserId, selectedDate }) {
     loadTarget()
   }, [supabaseUserId])
 
+  /**
+   * Simpan target kalori harian pengguna.
+   * Mengambil nilai dari `targetInput` dan memanggil service untuk menyimpan.
+   * @param {Event} e Event form submit (opsional, dipanggil dari form handler).
+   */
   const handleSaveTarget = async (e) => {
     e.preventDefault()
     if (!supabaseUserId) return

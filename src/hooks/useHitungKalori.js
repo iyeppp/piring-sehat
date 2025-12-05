@@ -3,6 +3,20 @@ import { useFoodAutocomplete } from './useFoodAutocomplete'
 import { useFoodLogs } from './useFoodLogs'
 import { useNutritionAndTarget } from './useNutritionAndTarget'
 
+/**
+ * Hook komposit untuk fitur utama menghitung kalori yang digunakan di halaman utama.
+ * Menggabungkan beberapa hook kecil: kalender, autocomplete, logs, dan nutrisi/target.
+ *
+ * @param {object} params Parameter input.
+ * @param {string|null|undefined} params.supabaseUserId ID pengguna dari Supabase.
+ * @param {string} params.userEmail Email pengguna (untuk tampilan saja).
+ * @param {boolean} params.isAuthenticated Status autentikasi.
+ * @param {function} params.onOpenLogin Callback untuk membuka dialog login.
+ * @returns {object} API gabungan untuk UI hitung kalori (calendar, autocomplete, logs, nutrition).
+ *
+ * Hook ini menyatukan API dari hook-hook kecil sehingga komponen halaman cukup memanggil
+ * satu hook `useHitungKalori` untuk mendapatkan semua data dan handler yang dibutuhkan.
+ */
 export function useHitungKalori({ supabaseUserId, userEmail, isAuthenticated, onOpenLogin }) {
   const calendar = useCalendarState()
   const autocomplete = useFoodAutocomplete({ supabaseUserId })

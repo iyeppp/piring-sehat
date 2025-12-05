@@ -1,10 +1,31 @@
 import { useState, useEffect } from 'react'
 import { addFoodLog, getFoodLogsByDate, getTotalCaloriesInRange, deleteFoodLog } from '../services/foodLogService'
 
+/**
+ * Hook untuk mengelola catatan makanan (food logs) per tanggal dan ringkasan bulanan.
+ *
+ * @param {object} params Parameter input hook.
+ * @param {string|null|undefined} params.supabaseUserId ID pengguna dari Supabase.
+ * @param {Date} params.selectedDate Tanggal yang sedang dipilih.
+ * @param {object|null} params.autoFood Objek makanan yang terisi otomatis (bila ada).
+ * @param {string} params.foodName Nama makanan yang diinput pengguna.
+ * @param {string|number} params.calories Nilai kalori yang diinput pengguna.
+ * @param {function} params.setFoodName Setter untuk `foodName`.
+ * @param {function} params.setCalories Setter untuk `calories`.
+ * @param {function} params.getMonthInfo Helper dari calendar untuk membuat rentang bulan.
+ * @returns {object} API untuk mengelola food logs (tambah/hapus, total harian, total bulanan).
+ *
+ * Hook ini bertanggung jawab memuat dan menyimpan catatan kalori dari service,
+ * serta meng-update state lokal setelah operasi CRUD agar UI langsung merefleksikan perubahan.
+ */
 export function useFoodLogs({ supabaseUserId, selectedDate, autoFood, foodName, calories, setFoodName, setCalories, getMonthInfo }) {
   const [calorieEntriesByDate, setCalorieEntriesByDate] = useState({})
   const [monthlyCalories, setMonthlyCalories] = useState(0)
 
+  /**
+   * Tambah entri makanan baru.
+   * Mencegah default form submit dan memanggil service `addFoodLog`.
+   */
   const handleAddEntry = async (e) => {
     e.preventDefault()
     if (!supabaseUserId) return
@@ -46,6 +67,10 @@ export function useFoodLogs({ supabaseUserId, selectedDate, autoFood, foodName, 
     }
   }
 
+  /**
+   * Hapus entri makanan berdasarkan id.
+   * @param {string|number} id ID entri yang akan dihapus.
+   */
   const handleDeleteEntry = async (id) => {
     const dateKey = selectedDate.toISOString().split('T')[0]
 
@@ -64,12 +89,20 @@ export function useFoodLogs({ supabaseUserId, selectedDate, autoFood, foodName, 
     }
   }
 
+  /**
+   * Hitung total kalori untuk tanggal yang sedang dipilih.
+   * @returns {number} Total kalori untuk hari tersebut.
+   */
   const getTotalCalories = () => {
     const dateKey = selectedDate.toISOString().split('T')[0]
     const entries = calorieEntriesByDate[dateKey] || []
     return entries.reduce((total, entry) => total + entry.calories, 0)
   }
 
+  /**
+   * Ambil total kalori bulanan yang tersimpan di state.
+   * @returns {number}
+   */
   const getMonthlyCalories = () => {
     return monthlyCalories
   }

@@ -2,6 +2,11 @@ import { auth } from '../firebase'
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
 
+/**
+ * Ambil header Authorization dari Firebase currentUser (Bearer token).
+ * Jika tidak ada user yang login, mengembalikan objek kosong.
+ * @returns {Promise<Object>} Header Authorization atau objek kosong.
+ */
 async function getAuthHeaders() {
   const user = auth.currentUser
   if (!user) return {}
@@ -9,6 +14,12 @@ async function getAuthHeaders() {
   return { Authorization: `Bearer ${token}` }
 }
 
+/**
+ * Helper untuk request dengan parsing JSON.
+ * @param {string} path Path endpoint.
+ * @param {RequestInit} [options={}] Opsi fetch.
+ * @returns {Promise<any>} Body response JSON atau null.
+ */
 async function request(path, options = {}) {
   const authHeaders = await getAuthHeaders()
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -32,6 +43,16 @@ async function request(path, options = {}) {
   return body
 }
 
+/**
+ * Sinkronisasi user Firebase ke tabel users di Supabase via backend.
+ * Jika user belum ada, backend akan membuat entri baru.
+ *
+ * @param {import('firebase/auth').User} firebaseUser Objek user Firebase.
+ * @returns {Promise<string>} ID user di Supabase.
+ *
+ * Fungsi ini mengirimkan data minimal (firebase_uid, email, username) ke endpoint
+ * backend yang bertanggung jawab menyimpan/menyinkronkan ke Supabase dan mengembalikan id.
+ */
 export async function syncFirebaseUserToSupabase(firebaseUser) {
   if (!firebaseUser) throw new Error('firebaseUser is required')
 
@@ -48,6 +69,11 @@ export async function syncFirebaseUserToSupabase(firebaseUser) {
 }
 
 // Ambil target kalori harian user (dalam kkal)
+/**
+ * Ambil target kalori harian pengguna dari backend.
+ * @param {string} userId ID user di Supabase.
+ * @returns {Promise<number|null>} Target kalori (number) atau null jika tidak diset.
+ */
 export async function getUserDailyCalorieTarget(userId) {
   if (!userId) throw new Error('userId is required')
 
@@ -56,6 +82,12 @@ export async function getUserDailyCalorieTarget(userId) {
 }
 
 // Update target kalori harian user (dalam kkal)
+/**
+ * Update target kalori harian pengguna.
+ * @param {string} userId ID user di Supabase.
+ * @param {number|null} target Nilai target baru (atau null untuk menghapus).
+ * @returns {Promise<number|null>} Target yang disimpan pada response.
+ */
 export async function updateUserDailyCalorieTarget(userId, target) {
   if (!userId) throw new Error('userId is required')
 

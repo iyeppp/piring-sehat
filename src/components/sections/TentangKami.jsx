@@ -1,5 +1,10 @@
 import './TentangKami.css'
 
+/**
+ * Static component to display "About Us" information.
+ *
+ * Berisi misi, visi, nilai, dan fitur yang ditawarkan oleh aplikasi.
+ */
 function TentangKami() {
   return (
     <section id="tentang" className="tentang-section">

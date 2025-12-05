@@ -3,6 +3,15 @@ import "./BMICalculator.css";
 import GeneticHeightCalculator from "./GeneticHeightCalculator";
 import ProteinCalculator from "./ProteinCalculator";
 
+/**
+ * Komponen Kalkulator BMI.
+ * Menghitung Body Mass Index berdasarkan berat (kg) dan tinggi (cm),
+ * menampilkan kategori, serta rekomendasi penyesuaian berat badan.
+ *
+ * Komponen ini menyediakan form untuk memasukkan jenis kelamin, berat, dan tinggi.
+ * Mengembalikan nilai BMI (satu desimal), kategori (Kurus/Normal/Gemuk/Obesitas),
+ * serta rekomendasi berapa kg yang perlu ditambah atau dikurangi untuk mencapai BMI ideal.
+ */
 function BMICalculator() {
   const [gender, setGender] = useState("");
   const [weight, setWeight] = useState("");
@@ -12,6 +21,12 @@ function BMICalculator() {
   const [weightRecommendation, setWeightRecommendation] = useState("");
   const [genderError, setGenderError] = useState("");
 
+  /**
+   * Handler perhitungan BMI yang dipanggil saat form disubmit.
+   * Melakukan validasi singkat, menghitung BMI, menentukan kategori,
+   * dan menyiapkan rekomendasi berat badan.
+   * @param {Event} e Event submit form.
+   */
   const calculateBMI = (e) => {
     e.preventDefault();
 
@@ -56,6 +71,9 @@ function BMICalculator() {
     }
   };
 
+  /**
+   * Reset semua input dan hasil pada kalkulator.
+   */
   const resetCalculator = () => {
     setGender("");
     setWeight("");

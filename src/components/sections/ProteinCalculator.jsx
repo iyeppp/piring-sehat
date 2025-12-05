@@ -1,6 +1,13 @@
 import { useState } from "react";
 import "./ProteinCalculator.css";
 
+/**
+ * Komponen Kalkulator Kebutuhan Protein harian.
+ * Menghitung rekomendasi gram protein berdasarkan berat badan, tingkat aktivitas, dan tujuan pengguna.
+ *
+ * Menggunakan tabel multiplier sederhana untuk menentukan kebutuhan protein per kg berat badan
+ * sesuai kombinasi `goal` dan `activity`.
+ */
 function ProteinCalculator() {
   const [weight, setWeight] = useState("");
   const [activity, setActivity] = useState("");
@@ -8,6 +15,10 @@ function ProteinCalculator() {
   const [formError, setFormError] = useState("");
   const [protein, setProtein] = useState(null);
 
+  /**
+   * Handler untuk menghitung kebutuhan protein ketika form disubmit.
+   * @param {Event} e Event submit form.
+   */
   const calculateProtein = (e) => {
     e.preventDefault();
 
@@ -39,6 +50,9 @@ function ProteinCalculator() {
     setProtein(totalProtein);
   };
 
+  /**
+   * Reset form input dan hasil perhitungan.
+   */
   const resetForm = () => {
     setWeight("");
     setActivity("");
