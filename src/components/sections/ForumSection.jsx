@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import './ForumSection.css'
 import { getForums, createForum, updateForum, deleteForum } from '../../services/forumService'
@@ -13,8 +13,13 @@ function ForumSection() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [editingForumId, setEditingForumId] = useState(null)
+  const [showEditForum, setShowEditForum] = useState(false)
+  const [editTitle, setEditTitle] = useState('')
+  const [editContent, setEditContent] = useState('')
   const [currentPage, setCurrentPage] = useState(0)
   const itemsPerPage = 3
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [forumToDelete, setForumToDelete] = useState(null)
 
   useEffect(() => {
     if (!isAuthenticated) return
@@ -48,13 +53,8 @@ function ForumSection() {
         content: content.trim(),
       }
 
-      if (editingForumId) {
-        const updated = await updateForum(editingForumId, payload)
-        setForums((prev) => prev.map((f) => (f.id === editingForumId ? updated : f)))
-      } else {
-        const created = await createForum(payload)
-        setForums((prev) => [created, ...prev])
-      }
+      const created = await createForum(payload)
+      setForums((prev) => [created, ...prev])
       setTitle('')
       setContent('')
       setEditingForumId(null)
@@ -102,21 +102,93 @@ function ForumSection() {
   const handleEdit = (forum) => {
     if (!forum) return
     setEditingForumId(forum.id)
-    setTitle(forum.title || '')
-    setContent(forum.content || '')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    setEditTitle(forum.title || '')
+    setEditContent(forum.content || '')
+    setShowEditForum(true)
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Yakin ingin menghapus forum ini?')) return
+  const handleEditCancel = () => {
+    setShowEditForum(false)
+    setEditingForumId(null)
+    setEditTitle('')
+    setEditContent('')
+  }
+
+  const handleEditSave = async (e) => {
+    e.preventDefault()
+    if (!editingForumId) return
+    if (!editTitle.trim() || !editContent.trim()) return
 
     try {
-      await deleteForum(id)
-      setForums((prev) => prev.filter((f) => f.id !== id))
+      setLoading(true)
+      setError('')
+      const payload = {
+        title: editTitle.trim(),
+        content: editContent.trim(),
+      }
+      const updated = await updateForum(editingForumId, payload)
+      setForums((prev) => prev.map((f) => (f.id === editingForumId ? updated : f)))
+      setShowEditForum(false)
+      setEditingForumId(null)
+    } catch (err) {
+      setError(err.message || 'Gagal mengubah forum')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDeleteClick = (forum) => {
+    setForumToDelete(forum)
+    setShowDeleteConfirm(true)
+  }
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false)
+    setForumToDelete(null)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!forumToDelete) return
+
+    try {
+      await deleteForum(forumToDelete.id)
+      setForums((prev) => prev.filter((f) => f.id !== forumToDelete.id))
+      setShowDeleteConfirm(false)
+      setForumToDelete(null)
     } catch (err) {
       alert(err.message || 'Gagal menghapus forum')
     }
   }
+
+  // Blok semua interaksi saat popup hapus forum aktif
+  useEffect(() => {
+    if (!showDeleteConfirm) return
+
+    const preventScroll = (e) => e.preventDefault()
+    document.addEventListener('wheel', preventScroll, { passive: false })
+    document.addEventListener('touchmove', preventScroll, { passive: false })
+    document.addEventListener('keydown', (e) => {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', ' '].includes(e.key)) {
+        e.preventDefault()
+      }
+    })
+
+    const preventOutsideClick = (e) => {
+      const modal = document.querySelector('.forum-delete-modal')
+      const backdrop = document.querySelector('.forum-delete-modal-backdrop')
+      if (backdrop && modal && e.target !== modal && !modal.contains(e.target)) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    }
+    document.addEventListener('click', preventOutsideClick, true)
+
+    return () => {
+      document.removeEventListener('wheel', preventScroll)
+      document.removeEventListener('touchmove', preventScroll)
+      document.removeEventListener('click', preventOutsideClick, true)
+    }
+  }, [showDeleteConfirm])
 
   return (
     <section className="forum-section">
@@ -146,15 +218,16 @@ function ForumSection() {
                     >
                       {forum.title}
                     </h3>
-                    <span className="forum-card-meta">
-                      oleh {forum.username || 'Pengguna'}
+                    <div className="forum-card-meta-wrapper">
+                      <span className="forum-card-meta">
+                        oleh {forum.username || 'Pengguna'}
+                      </span>
                       {forum.forum_created_at && (
-                        <>
-                          {' '}
-                          <span>{formatDateTime(forum.forum_created_at)}</span>
-                        </>
+                        <span className="forum-card-meta forum-card-meta-date">
+                          {formatDateTime(forum.forum_created_at)}
+                        </span>
                       )}
-                    </span>
+                    </div>
                   </div>
                   <p className="forum-card-content">
                     {forum.content?.slice(0, 120)}
@@ -181,7 +254,7 @@ function ForumSection() {
                         <button
                           type="button"
                           className="forum-delete-btn"
-                          onClick={() => handleDelete(forum.id)}
+                          onClick={() => handleDeleteClick(forum)}
                         >
                           Hapus
                         </button>
@@ -199,7 +272,7 @@ function ForumSection() {
                     onClick={handlePrevPage}
                     disabled={currentPage === 0}
                   >
-                    ← Sebelumnya
+                    ←
                   </button>
                   <span className="forum-page-indicator">
                     {currentPage + 1} / {totalPages}
@@ -210,7 +283,7 @@ function ForumSection() {
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages - 1}
                   >
-                    Berikutnya →
+                    →
                   </button>
                 </div>
               )}
@@ -237,30 +310,105 @@ function ForumSection() {
                 />
                 {error && <div className="forum-alert forum-alert-error">{error}</div>}
                 <button type="submit" className="forum-submit-btn" disabled={loading}>
-                  {loading ? 'Mengirim...' : editingForumId ? 'Simpan Perubahan' : 'Kirim Forum'}
+                  {loading ? 'Mengirim...' : 'Kirim Forum'}
                 </button>
               </form>
             </div>
           </div>
         ) : (
-          <div className="forum-form-card">
+          <div className="hitung-container">
             <header className="forum-header-inside">
               <h2 className="forum-title">Forum Diskusi</h2>
               <p className="forum-subtitle">
                 Tempat kamu berbagi pengalaman, tips, dan pertanyaan seputar pola makan sehat.
               </p>
             </header>
-            <h3 className="forum-form-title">Masuk untuk Mengakses Forum</h3>
-            <p className="forum-login-hint">
-              Kamu perlu login terlebih dahulu untuk membuat dan melihat diskusi di forum.
-            </p>
-            <button
-              type="button"
-              className="forum-login-btn"
-              onClick={onOpenLogin}
-            >
-              Login
-            </button>
+
+            <div className="locked-state">
+              <div className="lock-icon">🔒</div>
+              <h3 className="locked-title">Masuk untuk Mengakses Forum</h3>
+              <p className="locked-description">
+                Kamu perlu login terlebih dahulu untuk membuat topik dan melihat diskusi di forum.
+              </p>
+              <button
+                type="button"
+                className="btn-login-prompt"
+                onClick={onOpenLogin}
+              >
+                Login Sekarang
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="forum-delete-modal-backdrop" onClick={(e) => e.preventDefault()} onWheel={(e) => e.preventDefault()} onTouchMove={(e) => e.preventDefault()} onPointerDown={(e) => e.preventDefault()}>
+            <div className="forum-delete-modal" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+              <h3 className="forum-delete-modal-title">Hapus Forum?</h3>
+              <p className="forum-delete-modal-text">
+                Kamu yakin ingin menghapus forum "{forumToDelete?.title}"? Tindakan ini tidak dapat dibatalkan.
+              </p>
+              <div className="forum-delete-modal-actions">
+                <button
+                  type="button"
+                  className="forum-delete-cancel-btn"
+                  onClick={handleDeleteCancel}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  Tidak
+                </button>
+                <button
+                  type="button"
+                  className="forum-delete-confirm-btn"
+                  onClick={handleDeleteConfirm}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  Ya, Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Forum Modal - sama seperti di halaman detail forum */}
+        {showEditForum && (
+          <div className="logout-modal-backdrop">
+            <div className="logout-modal">
+              <h3 className="logout-modal-title">Edit Forum</h3>
+              <form onSubmit={handleEditSave} className="forum-form">
+                <input
+                  type="text"
+                  className="forum-input"
+                  placeholder="Judul forum"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                />
+                <textarea
+                  className="forum-textarea"
+                  rows={5}
+                  placeholder="Isi forum"
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                />
+                <div className="logout-modal-actions">
+                  <button
+                    type="button"
+                    className="logout-cancel-btn"
+                    onClick={handleEditCancel}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="logout-confirm-btn"
+                    disabled={loading}
+                  >
+                    {loading ? 'Menyimpan...' : 'Simpan'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>

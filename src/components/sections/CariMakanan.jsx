@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './CariMakanan.css'
 import bgCari from "../../assets/new-logo.png";
+import notFoundImage from "../../assets/notfound.png";
+
 import { searchFoodsByName } from '../../services/makananService'
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
@@ -67,6 +69,10 @@ function CariMakanan() {
     }
   }
 
+  const getAvailableLetters = () => {
+    return Object.keys(groupedFoods).sort()
+  }
+
   const fetchDebouncedFoods = async () => {
     try {
       setIsLoading(true)
@@ -126,7 +132,7 @@ function CariMakanan() {
 
           {/* Letter Navigation */}
           <div className="letter-navigation">
-            {LETTERS.map((letter) => (
+            {getAvailableLetters().map((letter) => (
               <button
                 key={letter}
                 className={`letter-btn ${selectedLetter === letter ? 'active' : ''}`}
@@ -146,9 +152,17 @@ function CariMakanan() {
                 {groupedFoods[selectedLetter] && groupedFoods[selectedLetter].length > 0 ? (
                   groupedFoods[selectedLetter].map((food) => (
                     <div key={food.id} className="food-item">
-                      {(food.image_url || food.image) && (
-                        <img src={food.image_url || food.image} alt={food.name} className="food-item-image" />
-                      )}
+                      <img
+                        src={food.image_url || food.image || notFoundImage}
+                        alt={food.name}
+                        className="food-item-image"
+                        onError={(e) => {
+                          if (e.target.src !== notFoundImage) {
+                            e.target.src = notFoundImage
+                          }
+                        }}
+                      />
+
                       <div className="food-item-content">
                         <h4>{food.name}</h4>
                         <div className="food-item-info">

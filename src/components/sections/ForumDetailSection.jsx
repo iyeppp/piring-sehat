@@ -13,12 +13,15 @@ function ForumDetailSection() {
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState('') // form komentar baru
   const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editCommentContent, setEditCommentContent] = useState('')
   const [expandedComments, setExpandedComments] = useState({})
   const [showEditForum, setShowEditForum] = useState(false)
   const [editTitle, setEditTitle] = useState('')
   const [editContent, setEditContent] = useState('')
+  const [showDeleteCommentConfirm, setShowDeleteCommentConfirm] = useState(false)
+  const [commentToDelete, setCommentToDelete] = useState(null)
 
   const formatDateTime = (value) => {
     if (!value) return ''
@@ -71,13 +74,8 @@ function ForumDetailSection() {
     try {
       setLoading(true)
       setError('')
-      if (editingCommentId) {
-        const updated = await updateComment(editingCommentId, { content: content.trim() })
-        setComments((prev) => prev.map((c) => (c.id === editingCommentId ? updated : c)))
-      } else {
-        const created = await createComment(id, { content: content.trim() })
-        setComments((prev) => [...prev, created])
-      }
+      const created = await createComment(id, { content: content.trim() })
+      setComments((prev) => [...prev, created])
       setContent('')
       setEditingCommentId(null)
     } catch (err) {
@@ -96,15 +94,27 @@ function ForumDetailSection() {
 
   const handleEditComment = (comment) => {
     setEditingCommentId(comment.id)
-    setContent(comment.content || '')
+    setEditCommentContent(comment.content || '')
   }
 
-  const handleDeleteComment = async (commentId) => {
-    if (!window.confirm('Yakin ingin menghapus komentar ini?')) return
+  const handleDeleteCommentClick = (comment) => {
+    setCommentToDelete(comment)
+    setShowDeleteCommentConfirm(true)
+  }
+
+  const handleDeleteCommentCancel = () => {
+    setShowDeleteCommentConfirm(false)
+    setCommentToDelete(null)
+  }
+
+  const handleDeleteCommentConfirm = async () => {
+    if (!commentToDelete) return
 
     try {
-      await deleteComment(commentId)
-      setComments((prev) => prev.filter((c) => c.id !== commentId))
+      await deleteComment(commentToDelete.id)
+      setComments((prev) => prev.filter((c) => c.id !== commentToDelete.id))
+      setShowDeleteCommentConfirm(false)
+      setCommentToDelete(null)
     } catch (err) {
       alert(err.message || 'Gagal menghapus komentar')
     }
@@ -145,6 +155,60 @@ function ForumDetailSection() {
     }
   }
 
+  const handleEditCommentCancel = () => {
+    setEditingCommentId(null)
+    setEditCommentContent('')
+  }
+
+  const handleEditCommentSave = async (e) => {
+    e.preventDefault()
+    if (!editingCommentId) return
+    if (!editCommentContent.trim()) return
+
+    try {
+      setLoading(true)
+      setError('')
+      const updated = await updateComment(editingCommentId, { content: editCommentContent.trim() })
+      setComments((prev) => prev.map((c) => (c.id === editingCommentId ? updated : c)))
+      setEditingCommentId(null)
+      setEditCommentContent('')
+    } catch (err) {
+      setError(err.message || 'Gagal mengubah komentar')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Blok interaksi saat modal hapus komentar aktif
+  useEffect(() => {
+    if (!showDeleteCommentConfirm) return
+
+    const preventScroll = (e) => e.preventDefault()
+    document.addEventListener('wheel', preventScroll, { passive: false })
+    document.addEventListener('touchmove', preventScroll, { passive: false })
+    document.addEventListener('keydown', (e) => {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', ' '].includes(e.key)) {
+        e.preventDefault()
+      }
+    })
+
+    const preventOutsideClick = (e) => {
+      const modal = document.querySelector('.forum-delete-modal')
+      const backdrop = document.querySelector('.forum-delete-modal-backdrop')
+      if (backdrop && modal && e.target !== modal && !modal.contains(e.target)) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    }
+    document.addEventListener('click', preventOutsideClick, true)
+
+    return () => {
+      document.removeEventListener('wheel', preventScroll)
+      document.removeEventListener('touchmove', preventScroll)
+      document.removeEventListener('click', preventOutsideClick, true)
+    }
+  }, [showDeleteCommentConfirm])
+
   if (!id) {
     return null
   }
@@ -152,45 +216,49 @@ function ForumDetailSection() {
   return (
     <section className="forum-section">
       <div className="forum-container">
-        <button
-          type="button"
-          className="forum-link-btn"
-          onClick={() => navigate('/forum')}
-        >
-          Kembali ke forum
-        </button>
-
         {loading && <p className="forum-loading">Memuat...</p>}
         {error && <p className="forum-alert forum-alert-error">{error}</p>}
 
         {forum && (
           <article className="forum-card forum-detail-card">
-            <div className="forum-card-header">
-              <div>
-                <h2 className="forum-card-title">{forum.title}</h2>
-                <span className="forum-card-meta">
-                  oleh {forum.username || 'Pengguna'}
-                  {forum.forum_created_at && (
-                    <>
-                      {' '}
-                      <span>{formatDateTime(forum.forum_created_at)}</span>
-                    </>
-                  )}
-                </span>
-              </div>
-              {canEditForum && (
-                <button
-                  type="button"
-                  className="forum-edit-btn"
-                  onClick={openEditForum}
-                >
-                  Edit Forum
-                </button>
-              )}
+            <div className="forum-back-card">
+              <button
+                type="button"
+                className="forum-link-btn"
+                onClick={() => navigate('/forum')}
+              >
+                Kembali ke forum
+              </button>
             </div>
-            <p className="forum-card-content forum-detail-content" style={{ whiteSpace: 'pre-wrap' }}>
-              {forum.content}
-            </p>
+
+            <div className="forum-topic-card">
+              <div className="forum-card-header">
+                <div>
+                  <h2 className="forum-card-title">{forum.title}</h2>
+                  <span className="forum-card-meta">
+                    oleh {forum.username || 'Pengguna'}
+                    {forum.forum_created_at && (
+                      <>
+                        {' '}
+                        <span>{formatDateTime(forum.forum_created_at)}</span>
+                      </>
+                    )}
+                  </span>
+                </div>
+                {canEditForum && (
+                  <button
+                    type="button"
+                    className="forum-edit-btn"
+                    onClick={openEditForum}
+                  >
+                    Edit Forum
+                  </button>
+                )}
+              </div>
+              <p className="forum-card-content forum-detail-content" style={{ whiteSpace: 'pre-wrap' }}>
+                {forum.content}
+              </p>
+            </div>
 
             <div className="forum-comments">
               <h3 className="forum-comments-title">Diskusi</h3>
@@ -201,40 +269,43 @@ function ForumDetailSection() {
               {comments.map((comment) => (
                 <div key={comment.id} className="forum-comment-item">
                   <div className="forum-comment-header">
-                    <span className="forum-comment-line">
+                    <div className="forum-comment-author-wrapper">
                       <span className="forum-comment-author">{comment.username || 'Pengguna'}</span>
-                      {': '}
-                      <span className="forum-comment-content-inline">
-                        {expandedComments[comment.id]
-                          ? comment.content
-                          : (comment.content || '').length > 150
-                            ? `${comment.content.slice(0, 150)}...`
-                            : comment.content}
-                      </span>
+                    </div>
+                    <div className="forum-comment-meta-right">
+                      {comment.comment_created_at && (
+                        <span className="forum-comment-time">
+                          {formatDateTime(comment.comment_created_at)}
+                        </span>
+                      )}
+                      {isAuthenticated && (comment.user_id === supabaseUserId || userRole === 'admin') && (
+                        <div className="forum-comment-actions">
+                          <button
+                            type="button"
+                            className="forum-comment-edit"
+                            onClick={() => handleEditComment(comment)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="forum-comment-delete"
+                            onClick={() => handleDeleteCommentClick(comment)}
+                          >
+                            Hapus
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="forum-comment-body">
+                    <span className="forum-comment-content-inline">
+                      {expandedComments[comment.id]
+                        ? comment.content
+                        : (comment.content || '').length > 150
+                          ? `${comment.content.slice(0, 150)}...`
+                          : comment.content}
                     </span>
-                    {comment.comment_created_at && (
-                      <span className="forum-card-meta" style={{ marginLeft: '0.5rem' }}>
-                        {formatDateTime(comment.comment_created_at)}
-                      </span>
-                    )}
-                    {isAuthenticated && (comment.user_id === supabaseUserId || userRole === 'admin') && (
-                      <div className="forum-comment-actions">
-                        <button
-                          type="button"
-                          className="forum-comment-edit"
-                          onClick={() => handleEditComment(comment)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="forum-comment-delete"
-                          onClick={() => handleDeleteComment(comment.id)}
-                        >
-                          Hapus
-                        </button>
-                      </div>
-                    )}
                   </div>
                   {(comment.content || '').length > 150 && (
                     <button
@@ -308,6 +379,80 @@ function ForumDetailSection() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Comment Modal - sama gaya dengan edit forum */}
+        {editingCommentId && (
+          <div className="logout-modal-backdrop">
+            <div className="logout-modal">
+              <h3 className="logout-modal-title">Edit Komentar</h3>
+              <form onSubmit={handleEditCommentSave} className="forum-form">
+                <textarea
+                  className="forum-textarea"
+                  rows={4}
+                  placeholder="Ubah komentar kamu"
+                  value={editCommentContent}
+                  onChange={(e) => setEditCommentContent(e.target.value)}
+                />
+                <div className="logout-modal-actions">
+                  <button
+                    type="button"
+                    className="logout-cancel-btn"
+                    onClick={handleEditCommentCancel}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="logout-confirm-btn"
+                    disabled={loading}
+                  >
+                    {loading ? 'Menyimpan...' : 'Simpan'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Comment Modal - reuse styling seperti hapus forum */}
+        {showDeleteCommentConfirm && (
+          <div
+            className="forum-delete-modal-backdrop"
+            onClick={(e) => e.preventDefault()}
+            onWheel={(e) => e.preventDefault()}
+            onTouchMove={(e) => e.preventDefault()}
+            onPointerDown={(e) => e.preventDefault()}
+          >
+            <div
+              className="forum-delete-modal"
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <h3 className="forum-delete-modal-title">Hapus Komentar?</h3>
+              <p className="forum-delete-modal-text">
+                Kamu yakin ingin menghapus komentar ini? Tindakan ini tidak dapat dibatalkan.
+              </p>
+              <div className="forum-delete-modal-actions">
+                <button
+                  type="button"
+                  className="forum-delete-cancel-btn"
+                  onClick={handleDeleteCommentCancel}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  Tidak
+                </button>
+                <button
+                  type="button"
+                  className="forum-delete-confirm-btn"
+                  onClick={handleDeleteCommentConfirm}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  Ya, Hapus
+                </button>
+              </div>
             </div>
           </div>
         )}
