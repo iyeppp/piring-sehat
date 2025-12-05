@@ -62,6 +62,32 @@ function ForumDetailSection() {
     }
   }, [id, isAuthenticated])
 
+  // Polling ringan untuk meng-update komentar secara otomatis tanpa refresh
+  useEffect(() => {
+    if (!id || !isAuthenticated) return
+
+    let isCancelled = false
+
+    const refreshComments = async () => {
+      try {
+        const latest = await getComments(id)
+        if (!isCancelled) {
+          setComments(latest)
+        }
+      } catch (err) {
+        // diamkan saja; error utama sudah ditangani di loadData
+        console.error('Gagal memuat komentar terbaru:', err)
+      }
+    }
+
+    const intervalId = setInterval(refreshComments, 5000) // setiap 5 detik
+
+    return () => {
+      isCancelled = true
+      clearInterval(intervalId)
+    }
+  }, [id, isAuthenticated])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!isAuthenticated) {
