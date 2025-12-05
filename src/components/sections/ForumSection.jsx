@@ -41,6 +41,38 @@ function ForumSection() {
     loadForums()
   }, [isAuthenticated])
 
+  // Polling ringan untuk memastikan daftar forum selalu ter-update tanpa refresh
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    let isCancelled = false
+
+    const refreshForums = async () => {
+      try {
+        const data = await getForums()
+        if (!isCancelled) {
+          setForums(data)
+
+          // Sesuaikan currentPage jika jumlah halaman berubah
+          const total = Math.max(1, Math.ceil(data.length / itemsPerPage))
+          setCurrentPage((prev) => {
+            if (prev >= total) return total - 1
+            return prev
+          })
+        }
+      } catch (err) {
+        console.error('Gagal memuat forum terbaru:', err)
+      }
+    }
+
+    const intervalId = setInterval(refreshForums, 5000) // setiap 5 detik
+
+    return () => {
+      isCancelled = true
+      clearInterval(intervalId)
+    }
+  }, [isAuthenticated, itemsPerPage])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!title.trim() || !content.trim()) return
