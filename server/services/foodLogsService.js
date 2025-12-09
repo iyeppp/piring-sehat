@@ -182,34 +182,30 @@ export async function getTotalCaloriesInRange(userId, startDate, endDate) {
 export async function getDailyNutritionSummary(userId, date) {
   try {
     const { data, error } = await supabase
-      .from('food_logs')
-      // Sesuaikan field nutrisi dengan kolom di tabel `makanan`.
-      // Kolom: proteins, fat, carbohydrate
-      .select('calories, makanan!inner(proteins, fat, carbohydrate)')
-      .eq('user_id', userId)
-      .eq('date', date)
+      .rpc('get_daily_nutrition', {
+        p_user_id: userId,
+        p_date: date,
+      })
 
     if (error) {
-      console.error('Supabase error getDailyNutritionSummary:', error)
+      console.error('Supabase error getDailyNutritionSummary (rpc):', error)
       return { protein: 0, carbs: 0, fat: 0 }
     }
 
-    let protein = 0
-    let carbs = 0
-    let fat = 0
-
-    for (const row of data || []) {
-      const food = row.makanan
-      if (!food) continue
-      // gunakan `proteins` dan `carbohydrate` sesuai nama kolom di tabel makanan
-      protein += Number(food.proteins || 0)
-      carbs += Number(food.carbohydrate || 0)
-      fat += Number(food.fat || 0)
+    // Fungsi get_daily_nutrition mengembalikan satu baris
+    const row = Array.isArray(data) ? data[0] : data
+    if (!row) {
+      return { protein: 0, carbs: 0, fat: 0 }
     }
 
-    return { protein, carbs, fat }
+    return {
+      protein: Number(row.total_protein || 0),
+      carbs: Number(row.total_carbs || 0),
+      fat: Number(row.total_fat || 0),
+      // total_calories tersedia sebagai row.total_calories jika ingin dipakai nanti
+    }
   } catch (err) {
-    console.error('Unexpected error getDailyNutritionSummary:', err)
+    console.error('Unexpected error getDailyNutritionSummary (rpc):', err)
     return { protein: 0, carbs: 0, fat: 0 }
   }
 }
