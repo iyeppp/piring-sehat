@@ -268,7 +268,9 @@ function ForumSection() {
                       className="forum-card-title"
                       onClick={() => navigate(`/forum/${forum.id}`)}
                     >
-                      {forum.title}
+                      {forum.title && forum.title.length > 30
+                        ? `${forum.title.slice(0, 30)}...`
+                        : forum.title}
                     </h3>
                     <div className="forum-card-meta-wrapper">
                       <span className="forum-card-meta">
