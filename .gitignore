@@ -12,7 +12,8 @@ dist
 dist-ssr
 *.local
 .env
-output_schema
+tabel_database
+view_fungsi_trigger
 
 # Editor directories and files
 .vscode/*
