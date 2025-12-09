@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 .env
+tabel_database
+view_fungsi_trigger
 
 # Editor directories and files
 .vscode/*

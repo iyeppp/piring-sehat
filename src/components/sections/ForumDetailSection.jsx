@@ -3,6 +3,20 @@ import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import './ForumSection.css'
 import { getForumById, getComments, createComment, updateComment, deleteComment, updateForum } from '../../services/forumService'
 
+/**
+ * Halaman detail satu thread forum beserta daftar komentarnya.
+ *
+ * Komponen ini memuat data thread (`getForumById`) dan komentar (`getComments`),
+ * menampilkan form untuk menambah komentar baru, serta fitur edit/hapus komentar
+ * dan edit forum untuk pemilik atau admin. Terdapat polling ringan setiap 5 detik
+ * untuk menyegarkan komentar dari backend selama user terautentikasi.
+ *
+ * Informasi autentikasi (isAuthenticated, supabaseUserId, userRole, onOpenLogin)
+ * dibaca dari `useOutletContext` yang disediakan oleh layout utama.
+ *
+ * @component
+ * @returns {JSX.Element|null} Section detail forum atau null jika `id` tidak tersedia.
+ */
 function ForumDetailSection() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -38,6 +52,10 @@ function ForumDetailSection() {
     }
   }
 
+  /**
+   * Load awal data forum dan komentar ketika id berubah dan user sudah login.
+   * Mengambil detail forum dan daftar komentar secara paralel.
+   */
   useEffect(() => {
     const loadData = async () => {
       if (!id) return
@@ -62,7 +80,10 @@ function ForumDetailSection() {
     }
   }, [id, isAuthenticated])
 
-  // Polling ringan untuk meng-update komentar secara otomatis tanpa refresh
+  /**
+   * Polling ringan untuk meng-update komentar secara otomatis tanpa refresh.
+   * Setiap 5 detik akan memanggil `getComments(id)` selama user masih terautentikasi.
+   */
   useEffect(() => {
     if (!id || !isAuthenticated) return
 
@@ -205,7 +226,10 @@ function ForumDetailSection() {
     }
   }
 
-  // Blok interaksi saat modal hapus komentar aktif
+  /**
+   * Blok interaksi saat modal hapus komentar aktif.
+   * Mencegah scroll, navigasi keyboard, dan klik di luar modal ketika dialog konfirmasi hapus terbuka.
+   */
   useEffect(() => {
     if (!showDeleteCommentConfirm) return
 
