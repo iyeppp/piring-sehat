@@ -3,6 +3,19 @@ import { useNavigate, useOutletContext } from 'react-router-dom'
 import './ForumSection.css'
 import { getForums, createForum, updateForum, deleteForum } from '../../services/forumService'
 
+/**
+ * Halaman utama forum diskusi.
+ *
+ * Menampilkan daftar thread forum dengan pagination, form untuk membuat thread baru,
+ * serta fitur edit dan hapus untuk pemilik thread atau admin. Komponen ini membaca
+ * konteks autentikasi dari `useOutletContext` (isAuthenticated, supabaseUserId, userRole)
+ * dan memanggil service `forumService` untuk berinteraksi dengan backend.
+ *
+ * Jika user belum login, komponen menampilkan state terkunci dengan ajakan untuk login.
+ *
+ * @component
+ * @returns {JSX.Element} Section forum beserta daftar thread dan form input.
+ */
 function ForumSection() {
   const navigate = useNavigate()
   const context = useOutletContext()
@@ -21,6 +34,8 @@ function ForumSection() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [forumToDelete, setForumToDelete] = useState(null)
 
+  // Load awal daftar forum ketika user sudah terautentikasi.
+  // Mengambil semua forum dan mereset halaman ke awal.
   useEffect(() => {
     if (!isAuthenticated) return
 
@@ -41,7 +56,9 @@ function ForumSection() {
     loadForums()
   }, [isAuthenticated])
 
-  // Polling ringan untuk memastikan daftar forum selalu ter-update tanpa refresh
+  // Polling ringan untuk memastikan daftar forum selalu ter-update tanpa refresh.
+  // Setiap 5 detik, memanggil `getForums()` selama user masih terautentikasi
+  // dan menyesuaikan currentPage jika jumlah halaman berubah.
   useEffect(() => {
     if (!isAuthenticated) return
 
@@ -192,7 +209,8 @@ function ForumSection() {
     }
   }
 
-  // Blok semua interaksi saat popup hapus forum aktif
+  // Blok semua interaksi saat popup hapus forum aktif.
+  // Mencegah scroll, navigasi keyboard, dan klik di luar modal ketika dialog konfirmasi hapus terbuka.
   useEffect(() => {
     if (!showDeleteConfirm) return
 

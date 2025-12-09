@@ -16,6 +16,14 @@ import { supabase } from '../supabaseClient.js'
  * @param {import('express').Response} res - Objek response Express.
  * @param {import('express').NextFunction} next - Fungsi untuk melanjutkan ke middleware/handler berikutnya.
  * @returns {Promise<void>} Promise yang selesai ketika middleware meneruskan request atau mengembalikan respons error.
+ *
+ * Query ke Supabase di middleware ini secara garis besar ekuivalen dengan PostgreSQL berikut:
+ * ```sql
+ * SELECT id, role
+ * FROM users
+ * WHERE firebase_uid = $1
+ * LIMIT 1;
+ * ```
  */
 export async function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization || ''

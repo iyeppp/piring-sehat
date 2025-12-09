@@ -80,12 +80,15 @@ function TestimoniSection() {
     }
   }
 
-  // Fetch testimoni saat component mount
+  // Fetch testimoni saat komponen pertama kali mount.
+  // Memuat daftar testimoni dari backend dan mengisi state `testimonials`.
   useEffect(() => {
     fetchTestimonials()
   }, [])
 
-  // Listen untuk event testimoni ditambahkan
+  // Listen untuk event custom `testimoniAdded` pada window.
+  // Event ini dipicu oleh komponen AddTestimoni setelah submit sukses,
+  // sehingga daftar testimoni akan direfresh otomatis.
   useEffect(() => {
     window.addEventListener('testimoniAdded', fetchTestimonials)
     return () => window.removeEventListener('testimoniAdded', fetchTestimonials)

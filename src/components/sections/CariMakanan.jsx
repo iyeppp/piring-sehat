@@ -24,6 +24,8 @@ function CariMakanan() {
   const [selectedLetter, setSelectedLetter] = useState('A')
 
 
+  // Debounce input pencarian.
+  // Mengupdate `debouncedSearchTerm` 300ms setelah user berhenti mengetik.
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm)
@@ -32,6 +34,8 @@ function CariMakanan() {
     return () => clearTimeout(timeout)
   }, [searchTerm])
 
+  // Load awal semua makanan (hingga limit tertentu) saat komponen pertama kali mount,
+  // lalu mengelompokkannya berdasarkan huruf pertama.
   useEffect(() => {
     loadAllFoods()
   }, [])
@@ -89,6 +93,9 @@ function CariMakanan() {
     }
   }
 
+  // Setiap kali `debouncedSearchTerm` berubah:
+  // - jika kosong, reload semua makanan
+  // - jika berisi query, memanggil API pencarian dengan term yang sudah di-debounce.
   useEffect(() => {
     if (debouncedSearchTerm.trim() === '') {
       loadAllFoods()

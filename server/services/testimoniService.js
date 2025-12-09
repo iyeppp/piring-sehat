@@ -12,6 +12,13 @@ import { supabase } from '../supabaseClient.js'
  * @param {string} params.message - Pesan testimoni (wajib).
  * @returns {Promise<Object>} Promise yang berisi data testimoni yang baru dibuat.
  * @throws {Error} Melempar error jika parameter tidak lengkap atau operasi Supabase gagal.
+ *
+ * PostgreSQL (kira-kira ekuivalen):
+ * ```sql
+ * INSERT INTO testimonials (user_id, username, job, message, created_at)
+ * VALUES ($1, $2, $3, $4, $5)
+ * RETURNING *;
+ * ```
  */
 export async function addTestimoni({ userId, username, job, message }) {
   if (!userId || !username || !job || !message) {
@@ -45,6 +52,13 @@ export async function addTestimoni({ userId, username, job, message }) {
  * @function getAllTestimonials
  * @returns {Promise<Array>} Promise yang berisi array testimoni.
  * @throws {Error} Melempar error jika query gagal.
+ *
+ * PostgreSQL (kira-kira ekuivalen):
+ * ```sql
+ * SELECT *
+ * FROM testimonials
+ * ORDER BY created_at DESC;
+ * ```
  */
 export async function getAllTestimonials() {
   try {
@@ -82,6 +96,14 @@ export async function getAllTestimonials() {
  * @param {number} userId - ID user di tabel `users`.
  * @returns {Promise<Array>} Promise yang berisi array testimoni dari user tersebut.
  * @throws {Error} Melempar error jika query gagal.
+ *
+ * PostgreSQL (kira-kira ekuivalen):
+ * ```sql
+ * SELECT *
+ * FROM testimonials
+ * WHERE user_id = $1
+ * ORDER BY created_at DESC;
+ * ```
  */
 export async function getTestimonialsByUserId(userId) {
   const { data, error } = await supabase
